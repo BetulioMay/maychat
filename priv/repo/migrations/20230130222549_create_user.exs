@@ -5,10 +5,13 @@ defmodule Maychat.Repo.Migrations.CreateUser do
     create table(:users) do
       add :username, :string
       add :email, :string
-      add :password, :string
+      add :encrypted_password, :string
       add :avatar_url, :string
 
       timestamps()
     end
+
+    create unique_index(:users, [:username])
+    create unique_index(:users, [:email])
   end
 end

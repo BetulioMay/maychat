@@ -6,5 +6,7 @@ defmodule Maychat.Schemas.Group do
     field(:description, :string)
     field(:avatar_url, :string)
     field(:max_capacity, :integer, default: 100)
+
+    timestamps()
   end
 end

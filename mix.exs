@@ -7,7 +7,8 @@ defmodule Maychat.MixProject do
       version: "0.1.0",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      aliases: aliases()
     ]
   end
 
@@ -23,7 +24,19 @@ defmodule Maychat.MixProject do
   defp deps do
     [
       {:ecto_sql, "~> 3.0"},
-      {:postgrex, ">= 0.0.0"}
+      {:postgrex, ">= 0.0.0"},
+      {:plug, "~> 1.13"},
+      {:plug_cowboy, "~> 2.0"},
+      {:jason, "~> 1.3"},
+      {:argon2_elixir, "~> 3.0"}
+    ]
+  end
+
+  defp aliases do
+    [
+      "ecto.mount": ["ecto.create", "ecto.migrate"],
+      "ecto.remount": ["ecto.drop", "ecto.mount"],
+      test: ["ecto.drop", "ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
 end

@@ -3,6 +3,14 @@ defmodule Maychat.Schemas.User do
 
   import Ecto.Changeset
 
+  @type t :: %__MODULE__{
+          id: integer(),
+          username: String.t(),
+          email: String.t(),
+          encrypted_password: String.t(),
+          avatar_url: String.t()
+        }
+
   schema "users" do
     field(:username, :string)
     field(:email, :string)

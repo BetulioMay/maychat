@@ -11,6 +11,7 @@ defmodule Maychat.Mutations.User do
   alias Maychat.Schemas.User
   alias Maychat.Repo
 
+  @spec create(%{atom() => String.t()}) :: {:ok, User.t()} | {:error, %Ecto.Changeset{}}
   def create(params) when is_map(params) do
     %User{}
     |> User.changeset(params)

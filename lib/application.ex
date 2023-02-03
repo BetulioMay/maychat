@@ -9,7 +9,7 @@ defmodule Maychat.Application do
       Maychat.Repo,
       {Plug.Cowboy,
        scheme: :http,
-       plug: Maychat.Router,
+       plug: MaychatWeb.Router,
        options: [port: get_cowboy_port(Application.get_env(:maychat, :port))]}
     ]
 

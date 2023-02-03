@@ -1,6 +1,6 @@
-defmodule Maychat.Routes.User do
+defmodule MaychatWeb.Routes.User do
   @moduledoc """
-  User API REST route
+  User API REST Route.
   """
   use Plug.Router
 

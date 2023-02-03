@@ -1,10 +1,9 @@
-defmodule Maychat.Router do
+defmodule MaychatWeb.Router do
   @moduledoc false
 
   use Plug.Router
 
-  alias Maychat.Routes
-  alias Maychat.Controllers.Auth
+  alias MaychatWeb.Routes
 
   if Mix.env() == :dev do
     use Plug.Debugger
@@ -17,7 +16,7 @@ defmodule Maychat.Router do
   plug(:match)
   plug(:dispatch)
 
-  forward("/auth", to: Auth)
+  forward("/auth", to: Routes.Auth)
   forward("/user", to: Routes.User)
 
   get "/hello" do

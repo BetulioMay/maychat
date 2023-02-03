@@ -1,4 +1,4 @@
-defmodule Maychat.UserTest do
+defmodule Maychat.AuthTest do
   use ExUnit.Case, async: true
 
   alias Maychat.Repo
@@ -11,8 +11,13 @@ defmodule Maychat.UserTest do
     end)
   end
 
-  describe "Registration" do
-    test "register a new user with valid information" do
+  @doc """
+  User registration module testing.
+
+  Tests against creation process of a new user
+  """
+  describe "register a new user" do
+    test "with valid information" do
       # Pre-count of users before registration
       pre_count = count_of(User)
 
@@ -30,7 +35,7 @@ defmodule Maychat.UserTest do
       assert pre_count + 1 == post_count
     end
 
-    test "register a new user with invalid information" do
+    test "with invalid information" do
       pre_count = count_of(User)
 
       # Make the params dirty by modifying the email to an invalid one
@@ -47,7 +52,7 @@ defmodule Maychat.UserTest do
       assert pre_count == post_count
     end
 
-    test "register a new user with existing email/username" do
+    test "with existing email/username" do
       params = valid_user_params()
 
       # Previously insert an user with the same email and same username
@@ -81,7 +86,7 @@ defmodule Maychat.UserTest do
       assert pre_count == count_of(User)
     end
 
-    test "register user without matching passwords" do
+    test "without matching passwords" do
       pre_count = count_of(User)
 
       # Invalid passwords

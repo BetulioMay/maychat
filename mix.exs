@@ -16,7 +16,7 @@ defmodule Maychat.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {Maychat.Application, []}
+      mod: {Maychat, []}
     ]
   end
 
@@ -28,7 +28,9 @@ defmodule Maychat.MixProject do
       {:plug, "~> 1.13"},
       {:plug_cowboy, "~> 2.0"},
       {:jason, "~> 1.3"},
-      {:argon2_elixir, "~> 3.0"}
+      {:argon2_elixir, "~> 3.0"},
+      {:finch, "~> 0.14"},
+      {:guardian, "~> 2.3"}
     ]
   end
 

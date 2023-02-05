@@ -25,7 +25,7 @@ defmodule Maychat.AuthTest do
       user_params = valid_user_params()
 
       # Insert user
-      result = Users.register(user_params)
+      result = Users.create_user(user_params)
 
       # Check count
       post_count = count_of(User)
@@ -44,7 +44,7 @@ defmodule Maychat.AuthTest do
         |> Map.update!(:email, fn _ -> "cesarmay" end)
 
       # Naively try insert the user
-      result = Users.register(user_params)
+      result = Users.create_user(user_params)
 
       post_count = count_of(User)
 
@@ -57,12 +57,12 @@ defmodule Maychat.AuthTest do
 
       # Previously insert an user with the same email and same username
       # other info can be repeated
-      Users.register(params)
+      Users.create_user(params)
 
       pre_count = count_of(User)
 
       # Cluelessly try to insert the user with same info
-      result = Users.register(params)
+      result = Users.create_user(params)
 
       assert {:error, %Ecto.Changeset{}} = result
       assert pre_count == count_of(User)
@@ -71,7 +71,7 @@ defmodule Maychat.AuthTest do
       only_email =
         params
         |> Map.update!(:username, fn _ -> "rms" end)
-        |> Users.register()
+        |> Users.create_user()
 
       assert {:error, _} = only_email
 
@@ -79,7 +79,7 @@ defmodule Maychat.AuthTest do
       only_username =
         params
         |> Map.update!(:email, fn _ -> "root@root.com" end)
-        |> Users.register()
+        |> Users.create_user()
 
       assert {:error, _} = only_username
 
@@ -94,7 +94,7 @@ defmodule Maychat.AuthTest do
         valid_user_params()
         |> Map.update!(:password_confirmation, fn _ -> "superdupersecret" end)
 
-      result = Users.register(params)
+      result = Users.create_user(params)
 
       assert {:error, _} = result
       assert pre_count == count_of(User)

@@ -3,6 +3,8 @@ defmodule Maychat.Schemas.User do
 
   import Ecto.Changeset
 
+  @email_pattern ~r/\A([\w+\-].?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
+
   @type t :: %__MODULE__{
           id: integer(),
           username: String.t(),
@@ -26,10 +28,23 @@ defmodule Maychat.Schemas.User do
     |> cast(params, [:username, :email, :password, :avatar_url])
     |> validate_required([:username, :email, :password])
     |> validate_confirmation(:password, required: true)
-    |> validate_format(:email, ~r/\A([\w+\-].?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i)
+    |> validate_format(:email, @email_pattern)
     |> unique_constraint([:username])
     |> unique_constraint([:email])
     |> put_encrypted_password()
+  end
+
+  # Validate login user parameters
+  # def login_params(struct, params) do
+  #   struct
+  #   |> cast(params, [:username, :email, :password])
+  #   |> validate_required([:username_email, :password])
+  # end
+
+  def email_format(email) do
+    %__MODULE__{}
+    |> change(%{email: email})
+    |> validate_format(:email, @email_pattern)
   end
 
   defp put_encrypted_password(

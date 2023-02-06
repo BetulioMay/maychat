@@ -2,21 +2,24 @@ defmodule MaychatWeb.Utils.Errors do
   @moduledoc """
   Utils for dealing with errors.
   """
+  import Ecto.Changeset, only: [traverse_errors: 2]
 
-  defprotocol NormalizeError do
-    @doc """
-    Normalize the given data structure `errors`
-    """
-    @spec normalize(term()) :: [String.t()]
-    def normalize(errors)
+  def normalize_atom_err(err) when is_atom(err) do
+    %{
+      error: [to_string(err)]
+    }
   end
 
-  defimpl NormalizeError, for: Ecto.Changeset do
-    def normalize(changeset = %Ecto.Changeset{}) do
-      changeset.errors
-      |> Enum.map(fn {k, {msg, _}} ->
-        to_string(k) <> ": " <> msg
-      end)
-    end
+  def normalize_string_err(err) when is_binary(err) do
+    %{
+      error: [err]
+    }
+  end
+
+  def normalize_changeset_err(changeset) do
+    changeset
+    |> traverse_errors(fn {msg, _opts} ->
+      msg
+    end)
   end
 end

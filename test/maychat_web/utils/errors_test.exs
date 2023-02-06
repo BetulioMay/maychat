@@ -2,14 +2,13 @@ defmodule MaychatWebTest.Utils.ErrorsTest do
   use ExUnit.Case, async: true
 
   alias Maychat.Schemas.User
-  alias MaychatWeb.Utils.Errors
+  import MaychatWeb.Utils.Errors
 
   @some_params %{
     username: nil,
     email: nil,
     password: nil
   }
-  @err_string_pttr ~r/(.*)(: )(.*)/
 
   setup do
     changeset = User.changeset(%User{}, @some_params)
@@ -17,20 +16,28 @@ defmodule MaychatWebTest.Utils.ErrorsTest do
     %{changeset: changeset}
   end
 
-  test "normalize/1 for Ecto.Changeset", %{changeset: changeset = %Ecto.Changeset{}} do
+  test "normalize_changeset_err/1", %{changeset: changeset = %Ecto.Changeset{}} do
     normalized =
       changeset
-      |> Errors.NormalizeError.normalize()
+      |> normalize_changeset_err()
 
-    # Must be a list
-    assert is_list(normalized) == true
+    IO.inspect(normalized)
+    # Check normalization
+    assert is_map(normalized) == true
+    assert Enum.all?(normalized, fn {k, v} -> is_atom(k) and is_list(v) end)
+  end
 
-    # Must be a list of strings
-    assert Enum.all?(normalized, &is_binary(&1)) == true
+  test "normalize_atom_err/1" do
+    normalized = :invalid |> normalize_atom_err()
 
-    # Strings must have format: "%change: %message"
-    assert Enum.all?(normalized, fn err when is_binary(err) ->
-             Regex.match?(@err_string_pttr, err)
-           end) == true
+    assert is_map(normalized)
+    assert normalized = %{error: ["invalid"]}
+  end
+
+  test "normalize_string_err/1" do
+    normalized = "invalid" |> normalize_string_err()
+
+    assert is_map(normalized)
+    assert normalized = %{error: ["invalid"]}
   end
 end

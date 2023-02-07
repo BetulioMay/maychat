@@ -28,8 +28,6 @@ defmodule MaychatWeb.Plugs.VerifyAuthRequest do
     defexception message: "login params are invalid"
   end
 
-  import Plug.Conn
-
   def init(opts), do: opts
 
   def call(conn = %Plug.Conn{request_path: path}, opts) do

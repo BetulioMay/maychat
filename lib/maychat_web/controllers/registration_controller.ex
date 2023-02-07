@@ -4,8 +4,8 @@ defmodule MaychatWeb.Controllers.RegistrationController do
   alias MaychatWeb.Controllers.SessionController
   alias Maychat.Contexts.Users
   alias Maychat.Schemas.User
+  alias MaychatWeb.Utils.Errors.NormalizeError
 
-  import MaychatWeb.Utils.Errors
   import MaychatWeb.Utils.Request
 
   @params ~w(username email password password_confirmation avatar_url)
@@ -62,7 +62,7 @@ defmodule MaychatWeb.Controllers.RegistrationController do
             success: false,
             errors:
               changeset
-              |> normalize_changeset_err()
+              |> NormalizeError.normalize()
           }
 
           raise(RegistrationRequestError, Jason.encode!(payload))

@@ -30,7 +30,14 @@ defmodule MaychatWeb.Routes.Auth do
   get("/logout", to: SessionController, init_opts: :logout)
 
   match _ do
-    raise(MaychatWeb.Router.EndpointNotFound)
+    # TODO: prepare_error_payloads()?? Maybe????
+    # Could work if we make kind of a protocol for error
+    # normalization.
+    # err_payload = %{
+    #   success: false,
+    #   errors: normalize_string_err("")
+    # }
+    raise(MaychatWeb.Router.EndpointNotFoundError, conn.path)
 
     # Avoid annoying warning because of unused conn
     conn

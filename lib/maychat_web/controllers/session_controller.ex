@@ -3,15 +3,15 @@ defmodule MaychatWeb.Controllers.SessionController do
 
   alias MaychatWeb.Auth
   alias MaychatWeb.Guardian
+  alias MaychatWeb.Utils.Errors.NormalizeError
 
-  import MaychatWeb.Utils.Errors
   import MaychatWeb.Utils.Request
-
   # IDEA: Normalize JSON responses for operations
   # Example:
   # %{
   #   success: boolean,
   #   message: String.t,
+  #   access_token: Guardian.Token.token()
   #   ...other info in the form of map. Then Map.merge
   # }
 
@@ -22,7 +22,7 @@ defmodule MaychatWeb.Controllers.SessionController do
 
     @impl true
     def exception(err_payload) do
-      %__MODULE__{message: err_payload}
+      %__MODULE__{message: Jason.encode!(err_payload)}
     end
   end
 
@@ -73,12 +73,14 @@ defmodule MaychatWeb.Controllers.SessionController do
   end
 
   defp login_reply({:error, reason}, _) do
+    err_payload = %{
+      success: false,
+      errors: NormalizeError.normalize(reason, :login)
+    }
+
     raise(
       LoginRequestError,
-      Jason.encode!(%{
-        success: false,
-        errors: normalize_atom_err(reason)
-      })
+      err_payload
     )
   end
 

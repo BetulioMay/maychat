@@ -2,7 +2,7 @@ defmodule MaychatWebTest.Utils.ErrorsTest do
   use ExUnit.Case, async: true
 
   alias Maychat.Schemas.User
-  import MaychatWeb.Utils.Errors
+  alias MaychatWeb.Utils.Errors.NormalizeError
 
   @some_params %{
     username: nil,
@@ -12,32 +12,44 @@ defmodule MaychatWebTest.Utils.ErrorsTest do
 
   setup do
     changeset = User.changeset(%User{}, @some_params)
+    atom_err = :invalid
+    str_err = "invalid"
 
-    %{changeset: changeset}
+    context = :some_context
+
+    %{changeset: changeset, atom_err: atom_err, str_err: str_err, context: context}
   end
 
-  test "normalize_changeset_err/1", %{changeset: changeset = %Ecto.Changeset{}} do
-    normalized =
-      changeset
-      |> normalize_changeset_err()
+  describe "protocol NormalizeError" do
+    test "normalize/2 for Ecto.Changeset", %{changeset: changeset} do
+      normalized = NormalizeError.normalize(changeset)
 
-    IO.inspect(normalized)
-    # Check normalization
-    assert is_map(normalized) == true
-    assert Enum.all?(normalized, fn {k, v} -> is_atom(k) and is_list(v) end)
-  end
+      # Check normalization
+      assert is_map(normalized) == true
+      assert Enum.all?(normalized, fn {k, v} -> is_atom(k) and is_list(v) end)
+    end
 
-  test "normalize_atom_err/1" do
-    normalized = :invalid |> normalize_atom_err()
+    test "normalize/2 for Atom/String with context", %{
+      atom_err: atom_err,
+      str_err: str_err,
+      context: some_context
+    } do
+      normalized_for_atom = NormalizeError.normalize(atom_err, some_context)
+      normalized_for_str = NormalizeError.normalize(str_err, some_context)
 
-    assert is_map(normalized)
-    assert normalized = %{error: ["invalid"]}
-  end
+      assert is_map(normalized_for_atom)
 
-  test "normalize_string_err/1" do
-    normalized = "invalid" |> normalize_string_err()
+      assert Enum.all?(normalized_for_atom, fn {k, v} ->
+               (is_atom(k) or is_binary(k)) and is_list(v)
+             end)
+    end
 
-    assert is_map(normalized)
-    assert normalized = %{error: ["invalid"]}
+    test "normalize/2 for Atom/String without context", %{
+      atom_err: atom_err,
+      str_err: str_err
+    } do
+      assert_raise ArgumentError, fn -> NormalizeError.normalize(atom_err, nil) end
+      assert_raise ArgumentError, fn -> NormalizeError.normalize(str_err, nil) end
+    end
   end
 end

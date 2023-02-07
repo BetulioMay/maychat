@@ -1,11 +1,11 @@
-defmodule Maychat.Guardian do
+defmodule MaychatWeb.Guardian do
   @moduledoc """
   Guardian implementation. Encode/Decode resources with JWT
 
   The resource in which this implementation is based is the user id,
   to authenticate the users.
 
-  This module must be named differently in case of the need of another
+  This module must be named differently in case of needing another
   implementation of Guardian.
   """
   use Guardian, otp_app: :maychat

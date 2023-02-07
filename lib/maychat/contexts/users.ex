@@ -3,8 +3,20 @@ defmodule Maychat.Contexts.Users do
   Context API for Users Schema. Acts as a thin layer of abstraction for the functions
   that mutate or access the users table.
   """
+  alias Maychat.Queries
   alias Maychat.Mutations
 
+  # NOTE: Maybe remove specs?
+  # => For now removing specs
+
+  ## Queries
+  defdelegate get_user_by_username_email(username_email), to: Queries.User
+  defdelegate get_user_by_id(id), to: Queries.User
+  defdelegate get_encrypted_pwd!(user), to: Queries.User
+  defdelegate list_users(), to: Queries.User
+
   ## Mutations
-  defdelegate register(params), to: Mutations.User, as: :create
+  defdelegate create_user(params), to: Mutations.User
+  defdelegate update_user(user, params), to: Mutations.User
+  defdelegate delete_user(user), to: Mutations.User
 end

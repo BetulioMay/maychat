@@ -1,8 +1,8 @@
-defmodule Maychat.Auth.Pipeline do
+defmodule MaychatWeb.Auth.Pipeline do
   use Guardian.Plug.Pipeline,
     otp_app: :maychat,
-    error_handler: Maychat.Auth.ErrorHandler,
-    module: Maychat.Guardian
+    error_handler: MaychatWeb.Auth.ErrorHandler,
+    module: MaychatWeb.Guardian
 
   # Token in session?
   plug(Guardian.Plug.VerifySession, claims: %{"typ" => "access"})

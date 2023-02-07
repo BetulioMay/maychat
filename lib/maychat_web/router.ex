@@ -2,8 +2,29 @@ defmodule MaychatWeb.Router do
   @moduledoc false
 
   use Plug.Router
+  use Plug.ErrorHandler
 
   alias MaychatWeb.Routes
+  import MaychatWeb.Utils.Errors
+
+  defmodule EndpointNotFound do
+    defexception message:
+                   Jason.encode!(%{success: false, errors: normalize_string_err("Not found")}),
+                 plug_status: 404
+
+    @impl true
+    def exception(path) do
+      msg = "Path #{path} Not Found"
+
+      %__MODULE__{
+        message:
+          Jason.encode!(%{
+            success: false,
+            errors: normalize_string_err(msg)
+          })
+      }
+    end
+  end
 
   if Mix.env() == :dev do
     use Plug.Debugger
@@ -24,6 +45,15 @@ defmodule MaychatWeb.Router do
   end
 
   match _ do
-    send_resp(conn, 404, "Not found")
+    raise(EndpointNotFound, ["/" | conn.path_info] |> Path.join())
+
+    # Avoid annoying warning because of unused conn
+    conn
+  end
+
+  @impl Plug.ErrorHandler
+  def handle_errors(conn, %{kind: _kind, reason: reason, stack: _stack}) do
+    conn
+    |> send_resp(conn.status, reason.message)
   end
 end

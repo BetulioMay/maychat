@@ -11,10 +11,17 @@ defmodule Maychat.Mutations.User do
   alias Maychat.Schemas.User
   alias Maychat.Repo
 
-  @spec create(%{atom() => String.t()}) :: {:ok, User.t()} | {:error, %Ecto.Changeset{}}
-  def create(params) when is_map(params) do
+  def create_user(params) do
     %User{}
     |> User.changeset(params)
     |> Repo.insert()
   end
+
+  def update_user(%User{} = user, params) do
+    user
+    |> User.changeset(params)
+    |> Repo.update()
+  end
+
+  def delete_user(%User{} = user), do: Repo.delete(user)
 end

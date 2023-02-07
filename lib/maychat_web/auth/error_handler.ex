@@ -1,4 +1,4 @@
-defmodule Maychat.Auth.ErrorHandler do
+defmodule MaychatWeb.Auth.ErrorHandler do
   import Plug.Conn
 
   @behaviour Guardian.Plug.ErrorHandler

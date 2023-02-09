@@ -2,7 +2,6 @@ defmodule MaychatWeb.Controllers.SessionController do
   import Plug.Conn
 
   alias MaychatWeb.Auth
-  alias MaychatWeb.Guardian
   alias MaychatWeb.Utils.Errors.NormalizeError
 
   import MaychatWeb.Utils.Request
@@ -32,7 +31,7 @@ defmodule MaychatWeb.Controllers.SessionController do
   # TEST: in case this doesn't work, revoke the options and just call login
   # and logout from call as a normal function
 
-  # `call` is going to be called as a dispatcher
+  # dispatcher
   def call(conn, :login), do: conn |> login()
   def call(conn, :logout), do: conn |> logout()
 
@@ -45,8 +44,14 @@ defmodule MaychatWeb.Controllers.SessionController do
   end
 
   defp logout(conn) do
+    # TODO: invalidate refresh tokens on logout
+    bearer =
+      conn
+      |> get_req_header("authorization")
+
+    IO.inspect(bearer)
+
     conn
-    |> Guardian.Plug.sign_out()
     |> send_resp(
       conn.status || 200,
       Jason.encode!(%{
@@ -56,18 +61,14 @@ defmodule MaychatWeb.Controllers.SessionController do
   end
 
   defp login_reply({:ok, user}, conn) do
-    # {:ok, token, _claims} =
-    #   user
-    #   |> Guardian.encode_and_sign()
-
     conn
-    # TODO: Is this correct? Maybe return the payload with the access token
-    # for post session auth
+    # TODO: Issue access and refresh tokens
     |> send_resp(
       conn.status || 200,
       Jason.encode!(%{
         success: true,
-        user_id: user.id
+        access_token: Auth.create_access_token(user)
+        # refresh_token: Auth.create_refresh_token(user)
       })
     )
   end

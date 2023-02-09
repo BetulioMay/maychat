@@ -33,7 +33,7 @@ defmodule MaychatWeb.Controllers.RegistrationController do
         Logger.info("user registered with id: #{id}")
 
         # User has been created, now let the session controller
-        # handle the later user login
+        # handle the later user login. Kind of a redirect thing.
         conn
         |> SessionController.call(:login)
 

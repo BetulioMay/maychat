@@ -13,10 +13,12 @@ defmodule MaychatWeb.Guardian do
   alias Maychat.Schemas.User
   alias Maychat.Contexts.Users
 
+  # Fetches the user.id as the subject, for the access token
   def subject_for_token(%User{} = user, _claims) do
     {:ok, to_string(user.id)}
   end
 
+  # Fetches the user (resource) from the claims in token
   def resource_from_claims(%{"sub" => id}) do
     case Users.get_user_by_id(id) do
       nil ->
@@ -26,4 +28,6 @@ defmodule MaychatWeb.Guardian do
         {:ok, user}
     end
   end
+
+  def resource_from_claims(_claims), do: {:error, :missing_subject}
 end

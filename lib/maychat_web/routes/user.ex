@@ -8,6 +8,7 @@ defmodule MaychatWeb.Routes.User do
   plug(:dispatch)
 
   match _ do
-    send_resp(conn, 404, "Not found")
+    %Plug.Conn{request_path: req_path} = conn
+    raise(MaychatWeb.Router.PathNotFoundError, req_path)
   end
 end

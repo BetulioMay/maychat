@@ -6,13 +6,14 @@ defmodule MaychatWeb.Router do
 
   alias MaychatWeb.Routes
   alias MaychatWeb.Utils.Errors.NormalizeError
+  alias MaychatWeb.Pipes
 
-  defmodule EndpointNotFoundError do
+  defmodule PathNotFoundError do
     defexception [:message, plug_status: 404]
 
     @impl true
-    def exception(path_info) do
-      msg = "Path #{["/" | path_info] |> Path.join()} Not Found"
+    def exception(req_path) do
+      msg = "Path #{req_path} not found"
 
       err_payload = %{
         success: false,
@@ -32,6 +33,9 @@ defmodule MaychatWeb.Router do
   end
 
   plug(:match)
+
+  plug(Pipes.EnsureAuth, paths: ["/protected"])
+
   plug(:dispatch)
 
   forward("/auth", to: Routes.Auth)
@@ -41,14 +45,21 @@ defmodule MaychatWeb.Router do
     send_resp(conn, 200, "world")
   end
 
-  match _ do
-    raise(EndpointNotFoundError, conn.path)
-    # Avoid annoying warning because of unused conn
+  get "/protected" do
     conn
+    |> send_resp(200, "How is it going?!")
+  end
+
+  match _ do
+    %Plug.Conn{request_path: req_path} = conn
+    raise(PathNotFoundError, req_path)
   end
 
   @impl Plug.ErrorHandler
-  def handle_errors(conn, %{kind: _kind, reason: reason, stack: _stack}) do
+  def handle_errors(conn, %{kind: kind, reason: reason, stack: _stack}) do
+    IO.inspect(kind)
+    IO.inspect(reason)
+
     conn
     |> send_resp(conn.status, reason.message)
   end

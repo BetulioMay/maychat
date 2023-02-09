@@ -22,7 +22,7 @@ config :maychat,
 #       REFRESH_TOKEN_SECRET env is not set.
 #     """)
 
-config :maychat, Maychat.Guardian,
+config :maychat, MaychatWeb.Guardian,
   issuer: "maychat",
   # REMINDER, make this env variable been fetched! from system in prod
   secret_key:

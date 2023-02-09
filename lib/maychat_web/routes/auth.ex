@@ -37,9 +37,7 @@ defmodule MaychatWeb.Routes.Auth do
     #   success: false,
     #   errors: normalize_string_err("")
     # }
-    raise(MaychatWeb.Router.EndpointNotFoundError, conn.path)
-
-    # Avoid annoying warning because of unused conn
-    conn
+    %Plug.Conn{request_path: req_path} = conn
+    raise(MaychatWeb.Router.PathNotFoundError, req_path)
   end
 end

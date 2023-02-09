@@ -38,7 +38,7 @@ defmodule Maychat.MixProject do
     [
       "ecto.mount": ["ecto.create", "ecto.migrate"],
       "ecto.remount": ["ecto.drop", "ecto.mount"],
-      test: ["ecto.drop", "ecto.create --quiet", "ecto.migrate", "test"]
+      test: ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
 end

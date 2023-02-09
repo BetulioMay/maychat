@@ -25,14 +25,17 @@ defmodule MaychatWeb.Plugs.Pipes.CheckRefreshToken do
     case Guardian.decode_and_verify(refresh_token, %{"typ" => "refresh"}) do
       {:ok, _claims} ->
         conn
+        |> assign(:refresh_token, to_string(refresh_token))
 
       _error ->
         # Ugly way of doing this, I know...
-        MaychatWeb.Auth.ErrorHandler.auth_error(
-          conn,
+        conn
+        |> MaychatWeb.Auth.ErrorHandler.auth_error(
           {:unauthenticated, "refresh token is invalid"},
           opts
         )
+        # Do not resend
+        |> halt()
     end
   end
 end

@@ -30,10 +30,10 @@ defmodule MaychatWeb.Routes.Auth do
   get("/logout", to: SessionController, init_opts: :logout)
 
   post "/refresh" do
-    IO.inspect(Guardian.Plug.current_token(conn))
+    # piped through CheckRefreshToken
 
     conn
-    |> send_resp(200, "Refreshing...")
+    |> send_resp(200, "Refreshing 🍹...")
   end
 
   match _ do

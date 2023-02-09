@@ -26,7 +26,10 @@ defmodule MaychatWeb.Controllers.RegistrationController do
   defp register(conn) do
     {:ok, reg_params, conn} = fetch_params_from_conn(conn, @params)
 
-    Logger.info("Received body_params #{inspect(conn.body_params)}")
+    # Displays the plain password!!.
+    if Mix.env() != :prod do
+      Logger.debug("Received body_params #{inspect(conn.body_params)}")
+    end
 
     case Users.create_user(reg_params) do
       {:ok, %User{id: id}} ->

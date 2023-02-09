@@ -16,7 +16,7 @@ defmodule Maychat.Schemas.User do
   schema "users" do
     field(:username, :string)
     field(:email, :string)
-    field(:password, :string, virtual: true)
+    field(:password, :string, virtual: true, redact: true)
     field(:encrypted_password, :string)
     field(:avatar_url, :string)
 

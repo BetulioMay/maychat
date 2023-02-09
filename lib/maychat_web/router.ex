@@ -6,7 +6,7 @@ defmodule MaychatWeb.Router do
 
   alias MaychatWeb.Routes
   alias MaychatWeb.Utils.Errors.NormalizeError
-  alias MaychatWeb.Pipes
+  alias MaychatWeb.Plugs.Pipes
 
   defmodule PathNotFoundError do
     defexception [:message, plug_status: 404]
@@ -46,8 +46,12 @@ defmodule MaychatWeb.Router do
   end
 
   get "/protected" do
+    user = Guardian.Plug.current_resource(conn)
+
+    IO.inspect(user)
+
     conn
-    |> send_resp(200, "How is it going?!")
+    |> send_resp(200, "How is it going, #{user.username}?!")
   end
 
   match _ do

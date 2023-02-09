@@ -1,4 +1,5 @@
 defmodule MaychatWeb.Auth do
+  import Plug.Conn
   alias Maychat.Contexts.Users
   alias MaychatWeb.Guardian
 
@@ -20,14 +21,35 @@ defmodule MaychatWeb.Auth do
   end
 
   def create_access_token(user) do
-    {:ok, access_token, _claims} = Guardian.encode_and_sign(user, %{}, ttl: {30, :minutes})
-    access_token
-  end
-
-  def create_refresh_token(user) do
-    case Guardian.encode_and_sign(user, %{}, token_type: "refresh", ttl: {4 * 12, :weeks}) do
-      {:ok, refresh_token, _claims} -> refresh_token
+    case Guardian.encode_and_sign(user, %{}, ttl: {30, :minutes}) do
+      {:ok, access_token, _claims} -> {:ok, access_token}
       error -> error
     end
   end
+
+  def create_refresh_token(conn, user) do
+    # Time-to-live ~= 1 year
+    case Guardian.encode_and_sign(user, %{}, token_type: "refresh", ttl: {4 * 12, :weeks}) do
+      {:ok, refresh_token, _claims} ->
+        conn = put_refresh_cookie(conn, refresh_token)
+        {:ok, conn, refresh_token}
+
+      error ->
+        error
+    end
+  end
+
+  defp put_refresh_cookie(conn, refresh_token) do
+    conn
+    |> put_resp_cookie(
+      "jid",
+      refresh_token,
+      http_only: true,
+      same_site: false,
+      secure: true,
+      max_age: 24 * 60 * 60 * 1000
+    )
+  end
+
+  def get_resource_from_conn(conn), do: conn |> Guardian.Plug.current_resource()
 end

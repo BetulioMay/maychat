@@ -1,9 +1,9 @@
-defmodule MaychatWeb.Pipes.EnsureAuth do
+defmodule MaychatWeb.Plugs.Pipes.EnsureAuth do
   use Plug.Builder
 
-  alias MaychatWeb.Auth
+  alias MaychatWeb.Auth.PipelineAccess
 
-  plug(Auth.Pipeline)
+  plug(PipelineAccess)
   plug(Guardian.Plug.EnsureAuthenticated)
 
   def init(opts), do: opts
@@ -11,7 +11,8 @@ defmodule MaychatWeb.Pipes.EnsureAuth do
   def call(%Plug.Conn{request_path: req_path} = conn, opts) do
     if req_path in opts[:paths] do
       conn
-      |> super(opts)
+      # Don't need paths anymore
+      |> super(Keyword.delete(opts, :paths))
     else
       conn
     end

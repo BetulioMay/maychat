@@ -5,14 +5,6 @@ defmodule MaychatWeb.Controllers.SessionController do
   alias MaychatWeb.Utils.Errors.NormalizeError
 
   import MaychatWeb.Utils.Request
-  # IDEA: Normalize JSON responses for operations
-  # Example:
-  # %{
-  #   success: boolean,
-  #   message: String.t,
-  #   access_token: Guardian.Token.token()
-  #   ...other info in the form of map. Then Map.merge
-  # }
 
   @params ~w(username email password)
 
@@ -61,14 +53,17 @@ defmodule MaychatWeb.Controllers.SessionController do
   end
 
   defp login_reply({:ok, user}, conn) do
+    {:ok, access_token} = Auth.create_access_token(user)
+    {:ok, conn, refresh_token} = Auth.create_refresh_token(conn, user)
+
     conn
-    # TODO: Issue access and refresh tokens
+    # TODO: Issue refresh tokens
     |> send_resp(
       conn.status || 200,
       Jason.encode!(%{
         success: true,
-        access_token: Auth.create_access_token(user)
-        # refresh_token: Auth.create_refresh_token(user)
+        access_token: access_token,
+        refresh_token: refresh_token
       })
     )
   end

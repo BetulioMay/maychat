@@ -13,9 +13,11 @@ defmodule Maychat.Contexts.Users do
   defdelegate get_user_by_username_email(username_email), to: Queries.User
   defdelegate get_user_by_id(id), to: Queries.User
   defdelegate get_encrypted_pwd!(user), to: Queries.User
+  defdelegate get_token_version_by_id(id), to: Queries.User
   defdelegate list_users(), to: Queries.User
 
   ## Mutations
+  defdelegate increment_token_version(user), to: Mutations.User
   defdelegate create_user(params), to: Mutations.User
   defdelegate update_user(user, params), to: Mutations.User
   defdelegate delete_user(user), to: Mutations.User

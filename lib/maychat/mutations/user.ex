@@ -24,4 +24,9 @@ defmodule Maychat.Mutations.User do
   end
 
   def delete_user(%User{} = user), do: Repo.delete(user)
+
+  def increment_token_version(%User{} = user) do
+    Ecto.Changeset.change(user, token_version: user.token_version + 1)
+    |> Repo.update!()
+  end
 end

@@ -4,11 +4,13 @@ defmodule MaychatWeb.Routes.Auth do
   """
   use Plug.Router
 
-  alias MaychatWeb.Plugs.{JsonHeader, Pipes.CheckRefreshToken}
+  alias MaychatWeb.Plugs.Pipes.EnsureAuth
+  alias MaychatWeb.Plugs.{JsonHeader, CheckRefreshToken}
   alias MaychatWeb.Controllers.{RegistrationController, SessionController, RefreshTokenController}
 
   plug(:match)
   plug(CheckRefreshToken, paths: ["/auth/refresh"])
+  plug(EnsureAuth, paths: ["/auth/logout"])
 
   plug(Plug.Parsers,
     pass: ["text/plain", "application/json"],

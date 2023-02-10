@@ -10,7 +10,8 @@ defmodule Maychat.Schemas.User do
           username: String.t(),
           email: String.t(),
           encrypted_password: String.t(),
-          avatar_url: String.t()
+          avatar_url: String.t(),
+          token_version: integer()
         }
 
   schema "users" do
@@ -19,6 +20,7 @@ defmodule Maychat.Schemas.User do
     field(:password, :string, virtual: true, redact: true)
     field(:encrypted_password, :string)
     field(:avatar_url, :string)
+    field(:token_version, :integer)
 
     timestamps()
   end

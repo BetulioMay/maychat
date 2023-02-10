@@ -7,6 +7,7 @@ defmodule Maychat.Repo.Migrations.CreateUser do
       add :email, :string
       add :encrypted_password, :string
       add :avatar_url, :string
+      add :token_version, :integer, default: 0
 
       timestamps()
     end

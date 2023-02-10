@@ -2,6 +2,8 @@ defmodule Maychat.Queries.User do
   alias Maychat.Repo
   alias Maychat.Schemas.User
 
+  import Ecto.Query
+
   def get_user_by_id(id), do: Repo.get(User, id)
 
   def list_users(), do: Repo.all(User)
@@ -19,6 +21,16 @@ defmodule Maychat.Queries.User do
   end
 
   def get_encrypted_pwd!(%User{encrypted_password: encrypted}), do: Base.decode16!(encrypted)
+
+  def get_token_version_by_id(id) do
+    query =
+      from(u in User,
+        where: u.id == ^id,
+        select: u.token_version
+      )
+
+    Repo.one(query)
+  end
 
   defp is_email?(maybe) do
     changeset = User.email_format(maybe)

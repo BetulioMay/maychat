@@ -32,7 +32,10 @@ defmodule MaychatWeb.Auth do
 
   def create_and_store_refresh_token(conn, user) do
     # Time-to-live ~= 1 year
-    case Guardian.encode_and_sign(user, %{}, token_type: "refresh", ttl: @refresh_token_ttl) do
+    case Guardian.encode_and_sign(user, %{"version" => Users.get_token_version_by_id(user.id)},
+           token_type: "refresh",
+           ttl: @refresh_token_ttl
+         ) do
       {:ok, refresh_token, _claims} ->
         conn = put_refresh_cookie(conn, refresh_token)
         {:ok, conn, refresh_token}
@@ -60,6 +63,11 @@ defmodule MaychatWeb.Auth do
       error ->
         error
     end
+  end
+
+  @spec revoke_refresh_token(binary) :: {:error, any} | {:ok, map}
+  def revoke_refresh_token(refresh_token) do
+    Guardian.revoke(refresh_token)
   end
 
   defp put_refresh_cookie(conn, refresh_token) do

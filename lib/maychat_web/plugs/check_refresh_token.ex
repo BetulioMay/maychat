@@ -1,4 +1,4 @@
-defmodule MaychatWeb.Plugs.Pipes.CheckRefreshToken do
+defmodule MaychatWeb.Plugs.CheckRefreshToken do
   import Plug.Conn
   alias MaychatWeb.Guardian
 

@@ -6,9 +6,18 @@ defmodule MaychatWeb.Controllers.SessionController do
 
   import MaychatWeb.Utils.Request
 
-  @params ~w(username email password)
+  @login_params ~w(username email password)
 
   defmodule LoginRequestError do
+    defexception [:message, plug_status: 400]
+
+    @impl true
+    def exception(err_payload) do
+      %__MODULE__{message: Jason.encode!(err_payload)}
+    end
+  end
+
+  defmodule LogoutRequestError do
     defexception [:message, plug_status: 400]
 
     @impl true
@@ -29,34 +38,39 @@ defmodule MaychatWeb.Controllers.SessionController do
 
   ## Login logic
   defp login(conn) do
-    {:ok, login_params, conn} = fetch_params_from_conn(conn, @params)
+    {:ok, login_params, conn} = fetch_params_from_conn(conn, @login_params)
 
     Auth.authenticate_user(login_params)
     |> login_reply(conn)
   end
 
   defp logout(conn) do
-    # TODO: invalidate refresh tokens on logout
-    bearer =
-      conn
-      |> get_req_header("authorization")
+    # Cookies are already fetched because of CheckRefreshToken middleware
+    %Plug.Conn{cookies: cookies} = conn
 
-    IO.inspect(bearer)
+    case Auth.revoke_refresh_token(cookies["jid"]) do
+      {:ok, _claims} ->
+        conn
+        |> send_resp(
+          conn.status || 200,
+          Jason.encode!(%{
+            success: true
+          })
+        )
 
-    conn
-    |> send_resp(
-      conn.status || 200,
-      Jason.encode!(%{
-        success: true
-      })
-    )
+      {:error, err} ->
+        err_payload = %{
+          success: false,
+          errors: NormalizeError.normalize(err, "logout")
+        }
+
+        raise(LogoutRequestError, err_payload)
+    end
   end
 
   defp login_reply({:ok, user}, conn) do
     {:ok, access_token} = Auth.create_access_token(user)
     {:ok, conn, _refresh_token} = Auth.create_and_store_refresh_token(conn, user)
-
-    IO.inspect(conn)
 
     conn
     |> send_resp(

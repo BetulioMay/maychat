@@ -3,6 +3,9 @@ defmodule MaychatWeb.Auth do
   alias Maychat.Contexts.Users
   alias MaychatWeb.Guardian
 
+  @access_token_ttl {30, :minutes}
+  @refresh_token_ttl {4 * 12, :weeks}
+
   def authenticate_user(params) do
     username_email = if params["email"], do: params["email"], else: params["username"]
 
@@ -21,18 +24,38 @@ defmodule MaychatWeb.Auth do
   end
 
   def create_access_token(user) do
-    case Guardian.encode_and_sign(user, %{}, ttl: {30, :minutes}) do
+    case Guardian.encode_and_sign(user, %{}, ttl: @access_token_ttl) do
       {:ok, access_token, _claims} -> {:ok, access_token}
       error -> error
     end
   end
 
-  def create_refresh_token(conn, user) do
+  def create_and_store_refresh_token(conn, user) do
     # Time-to-live ~= 1 year
-    case Guardian.encode_and_sign(user, %{}, token_type: "refresh", ttl: {4 * 12, :weeks}) do
+    case Guardian.encode_and_sign(user, %{}, token_type: "refresh", ttl: @refresh_token_ttl) do
       {:ok, refresh_token, _claims} ->
         conn = put_refresh_cookie(conn, refresh_token)
         {:ok, conn, refresh_token}
+
+      error ->
+        error
+    end
+  end
+
+  def refresh_refresh_token(conn, refresh_token) do
+    case Guardian.refresh(refresh_token, ttl: @refresh_token_ttl) do
+      {:ok, _old_stuff, {new_refresh_token, _new_claims}} ->
+        put_refresh_cookie(conn, new_refresh_token)
+
+      error ->
+        error
+    end
+  end
+
+  def exchange_refresh_for_access_token(refresh_token) do
+    case Guardian.exchange(refresh_token, "refresh", "access", ttl: @access_token_ttl) do
+      {:ok, _, {access_token, _claims}} ->
+        {:ok, access_token}
 
       error ->
         error

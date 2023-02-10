@@ -5,10 +5,9 @@ defmodule MaychatWeb.Routes.Auth do
   use Plug.Router
 
   alias MaychatWeb.Plugs.{JsonHeader, Pipes.CheckRefreshToken}
-  alias MaychatWeb.Controllers.{RegistrationController, SessionController}
+  alias MaychatWeb.Controllers.{RegistrationController, SessionController, RefreshTokenController}
 
   plug(:match)
-
   plug(CheckRefreshToken, paths: ["/auth/refresh"])
 
   plug(Plug.Parsers,
@@ -17,11 +16,11 @@ defmodule MaychatWeb.Routes.Auth do
   )
 
   # plug(VerifyAuthRequest, paths: ~w(/register /login))
-
   # Always return a JSON object
   plug(JsonHeader)
-
   plug(:dispatch)
+
+  # Endpoints
 
   post("/register", to: RegistrationController)
 
@@ -29,12 +28,8 @@ defmodule MaychatWeb.Routes.Auth do
 
   get("/logout", to: SessionController, init_opts: :logout)
 
-  post "/refresh" do
-    # piped through CheckRefreshToken
-
-    conn
-    |> send_resp(200, "Refreshing 🍹...")
-  end
+  # piped through CheckRefreshToken
+  post("/refresh", to: RefreshTokenController)
 
   match _ do
     # TODO: prepare_error_payloads()?? Maybe????

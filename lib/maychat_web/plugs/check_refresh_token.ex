@@ -1,25 +1,23 @@
 defmodule MaychatWeb.Plugs.Pipes.CheckRefreshToken do
-  use Plug.Builder
+  import Plug.Conn
   alias MaychatWeb.Guardian
 
   # TODO: amend this to use a Guardian.Plug.Pipeline instead
-  plug(:load_cookies)
-  plug(:verify_refresh_token)
+  # so Guardian.Pipeline can be used
 
   def init(opts), do: opts
 
   def call(%Plug.Conn{request_path: req_path} = conn, opts) do
     if req_path in opts[:paths] do
       conn
-      |> super(Keyword.delete(opts, :paths))
+      |> fetch_cookies()
+      |> verify_and_assign_refresh_token(opts)
     else
       conn
     end
   end
 
-  defp load_cookies(conn, _opts), do: fetch_cookies(conn)
-
-  defp verify_refresh_token(%Plug.Conn{cookies: cookies} = conn, opts) do
+  defp verify_and_assign_refresh_token(%Plug.Conn{cookies: cookies} = conn, opts) do
     %{"jid" => refresh_token} = cookies
 
     case Guardian.decode_and_verify(refresh_token, %{"typ" => "refresh"}) do
@@ -34,8 +32,6 @@ defmodule MaychatWeb.Plugs.Pipes.CheckRefreshToken do
           {:unauthenticated, "refresh token is invalid"},
           opts
         )
-        # Do not resend
-        |> halt()
     end
   end
 end

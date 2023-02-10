@@ -27,6 +27,6 @@ defmodule Maychat.Mutations.User do
 
   def increment_token_version(%User{} = user) do
     Ecto.Changeset.change(user, token_version: user.token_version + 1)
-    |> Repo.update!()
+    |> Repo.update()
   end
 end

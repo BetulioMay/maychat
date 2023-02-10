@@ -1,4 +1,8 @@
 defmodule MaychatWeb.Plugs.CheckRefreshToken do
+  @moduledoc """
+  Middleware that checks and validates the refresh token found in
+  a connections cookie
+  """
   import Plug.Conn
   alias MaychatWeb.Guardian
 

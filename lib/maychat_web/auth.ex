@@ -1,12 +1,18 @@
 defmodule MaychatWeb.Auth do
   import Plug.Conn
   alias Maychat.Contexts.Users
+  alias Maychat.Schemas.User
   alias MaychatWeb.Guardian
 
-  @access_token_ttl {30, :minutes}
+  @access_token_ttl {15, :seconds}
   @refresh_token_ttl {4 * 12, :weeks}
 
-  def authenticate_user(params) do
+  @doc """
+  Authenticates a user given its login params.
+  """
+  @spec authenticate_user(%{String.t() => any()}) ::
+          {:ok, User.t()} | {:error, :invalid_credentials}
+  def(authenticate_user(params)) do
     username_email = if params["email"], do: params["email"], else: params["username"]
 
     case Users.get_user_by_username_email(username_email) do
@@ -32,7 +38,7 @@ defmodule MaychatWeb.Auth do
 
   def create_and_store_refresh_token(conn, user) do
     # Time-to-live ~= 1 year
-    case Guardian.encode_and_sign(user, %{"version" => Users.get_token_version_by_id(user.id)},
+    case Guardian.encode_and_sign(user, %{"version" => Users.get_token_version_by_id!(user.id)},
            token_type: "refresh",
            ttl: @refresh_token_ttl
          ) do

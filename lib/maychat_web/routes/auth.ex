@@ -9,7 +9,7 @@ defmodule MaychatWeb.Routes.Auth do
   alias MaychatWeb.Controllers.{RegistrationController, SessionController, RefreshTokenController}
 
   plug(:match)
-  plug(CheckRefreshToken, paths: ["/auth/refresh"])
+  plug(CheckRefreshToken, paths: ["/auth/refresh", "/auth/logout"])
   plug(EnsureAuth, paths: ["/auth/logout"])
 
   plug(Plug.Parsers,

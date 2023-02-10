@@ -29,10 +29,13 @@ defmodule MaychatWeb.Controllers.SessionController do
   ## Plug Boilerplate
   def init(opts), do: opts
 
-  # TEST: in case this doesn't work, revoke the options and just call login
+  # TEST: in case this doesn't work, remove the options and just call login
   # and logout from call as a normal function
 
   # dispatcher
+  @spec call(Plug.Conn.t(), :login | :logout) :: Plug.Conn.t()
+  def call(conn, opts)
+
   def call(conn, :login), do: conn |> login()
   def call(conn, :logout), do: conn |> logout()
 
@@ -44,28 +47,13 @@ defmodule MaychatWeb.Controllers.SessionController do
     |> login_reply(conn)
   end
 
+  ## Logout logic
   defp logout(conn) do
     # Cookies are already fetched because of CheckRefreshToken middleware
     %Plug.Conn{cookies: cookies} = conn
 
-    case Auth.revoke_refresh_token(cookies["jid"]) do
-      {:ok, _claims} ->
-        conn
-        |> send_resp(
-          conn.status || 200,
-          Jason.encode!(%{
-            success: true
-          })
-        )
-
-      {:error, err} ->
-        err_payload = %{
-          success: false,
-          errors: NormalizeError.normalize(err, "logout")
-        }
-
-        raise(LogoutRequestError, err_payload)
-    end
+    Auth.revoke_refresh_token(cookies["jid"])
+    |> logout_reply(conn)
   end
 
   defp login_reply({:ok, user}, conn) do
@@ -92,6 +80,25 @@ defmodule MaychatWeb.Controllers.SessionController do
       LoginRequestError,
       err_payload
     )
+  end
+
+  defp logout_reply({:ok, _claims}, conn) do
+    conn
+    |> send_resp(
+      200,
+      Jason.encode!(%{
+        success: true
+      })
+    )
+  end
+
+  defp logout_reply({:error, reason}, _) do
+    err_payload = %{
+      success: false,
+      errors: NormalizeError.normalize(reason, "logout")
+    }
+
+    raise(LogoutRequestError, err_payload)
   end
 
   # def login_user(conn) do

@@ -43,13 +43,14 @@ defmodule MaychatWeb.Controllers.RefreshTokenController do
 
     %{claims: %{"version" => token_version, "sub" => user_id}} = Guardian.peek(refresh_token)
 
-    if current_version = Users.get_token_version_by_id(user_id) == nil do
-      raise(ResourceNotFound, "resource not found")
-    end
+    current_version = get_current_token_version!(user_id)
 
     if token_version != current_version do
       raise(InvalidTokenVersion, "token version is invalid")
     end
+
+    IO.inspect(token_version, label: "JID version")
+    IO.inspect(current_version, label: "Current token version")
 
     {:ok, access_token} = Auth.exchange_refresh_for_access_token(refresh_token)
 
@@ -64,5 +65,16 @@ defmodule MaychatWeb.Controllers.RefreshTokenController do
         access_token: access_token
       })
     )
+  end
+
+  defp get_current_token_version!(id) do
+    try do
+      Users.get_token_version_by_id!(id)
+    rescue
+      Ecto.NoResultsError -> raise(ResourceNotFound, "resource not found")
+      _e -> raise("Unexpected error")
+    else
+      current_version -> current_version
+    end
   end
 end

@@ -3,6 +3,11 @@ defmodule MaychatWeb.Utils.Request do
   Utils for dealing with Plug.Conn requests
   """
 
+  @doc """
+  Fetches params from a conn given a list of keys.
+  """
+  @spec fetch_params_from_conn(Plug.Conn.t(), list(String.t())) ::
+          {:ok, %{String.t() => any()}, Plug.Conn.t()}
   def fetch_params_from_conn(conn, params) when is_list(params) do
     # body_params = %{
     #   "test1" => "test1",

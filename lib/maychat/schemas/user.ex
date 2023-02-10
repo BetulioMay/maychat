@@ -52,7 +52,11 @@ defmodule Maychat.Schemas.User do
   defp put_encrypted_password(
          %Ecto.Changeset{valid?: true, changes: %{password: plain_pwd}} = changeset
        ) do
-    put_change(changeset, :encrypted_password, Argon2.hash_pwd_salt(plain_pwd) |> Base.encode16())
+    put_change(
+      changeset,
+      :encrypted_password,
+      Argon2.hash_pwd_salt(plain_pwd) |> Base.encode16()
+    )
   end
 
   defp put_encrypted_password(changeset), do: changeset

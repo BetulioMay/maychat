@@ -6,6 +6,7 @@ defmodule MaychatWeb.Controllers.RegistrationController do
   alias Maychat.Schemas.User
   alias MaychatWeb.Utils.Errors.NormalizeError
 
+  import Plug.Conn
   import MaychatWeb.Utils.Request
 
   @params ~w(username email password password_confirmation avatar_url)
@@ -61,15 +62,20 @@ defmodule MaychatWeb.Controllers.RegistrationController do
           #     end)
           # }
 
-          payload = %{
+          err_payload = %{
             success: false,
             errors:
               changeset
               |> NormalizeError.normalize()
           }
 
-          raise(RegistrationRequestError, Jason.encode!(payload))
+          raise(RegistrationRequestError, Jason.encode!(err_payload))
         end
+
+        # Unexpected error. Changeset is valid, but there was error
+        # on inserting in the db
+        conn
+        |> send_resp(500, "Unexpected error")
     end
   end
 end

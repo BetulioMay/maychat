@@ -33,7 +33,7 @@ defmodule MaychatWeb.Guardian do
 
   def on_revoke(%{"sub" => id} = claims, _token, _options) do
     with %User{} = user <- Users.get_user_by_id(id),
-         {:ok, _} <- Users.increment_token_version(user) do
+         {:ok, _user} <- Users.increment_token_version(user) do
       {:ok, claims}
     else
       nil -> {:error, "resource not found"}

@@ -49,9 +49,6 @@ defmodule MaychatWeb.Controllers.RefreshTokenController do
       raise(InvalidTokenVersion, "token version is invalid")
     end
 
-    IO.inspect(token_version, label: "JID version")
-    IO.inspect(current_version, label: "Current token version")
-
     {:ok, access_token} = Auth.exchange_refresh_for_access_token(refresh_token)
 
     conn

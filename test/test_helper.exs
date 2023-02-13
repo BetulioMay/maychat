@@ -1,3 +1,3 @@
 ExUnit.start()
-
-Finch.start_link(name: MaychatWebHttpFlinch)
+Faker.start()
+Ecto.Adapters.SQL.Sandbox.mode(Maychat.Repo, :manual)

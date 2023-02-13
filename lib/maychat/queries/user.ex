@@ -20,6 +20,7 @@ defmodule Maychat.Queries.User do
     end
   end
 
+  @spec get_encrypted_pwd!(User.t()) :: binary()
   def get_encrypted_pwd!(%User{encrypted_password: encrypted}), do: Base.decode16!(encrypted)
 
   def get_token_version_by_id!(id) do

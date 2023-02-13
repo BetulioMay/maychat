@@ -4,6 +4,7 @@ defmodule Maychat.Schemas.User do
   import Ecto.Changeset
 
   @email_pattern ~r/\A([\w+\-].?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
+  @image_url_pattern ~r/(https?:\/\/.*\.(?:png|jpg|jpeg))/i
 
   @type t :: %__MODULE__{
           id: integer(),
@@ -31,17 +32,30 @@ defmodule Maychat.Schemas.User do
     |> validate_required([:username, :email, :password])
     |> validate_confirmation(:password, required: true)
     |> validate_format(:email, @email_pattern)
+    |> validate_format(:avatar_url, @image_url_pattern)
+    |> validate_length(:username, min: 3, max: 30)
     |> unique_constraint([:username])
     |> unique_constraint([:email])
     |> put_encrypted_password()
   end
 
-  # Validate login user parameters
-  # def login_params(struct, params) do
-  #   struct
-  #   |> cast(params, [:username, :email, :password])
-  #   |> validate_required([:username_email, :password])
-  # end
+  # TODO: Make user be able to change their passwords
+  def edit_changeset(struct, params) do
+    struct
+    |> cast(params, [
+      :username,
+      :email,
+      :password,
+      :avatar_url
+    ])
+    |> validate_required([:username, :email])
+    |> validate_format(:email, @email_pattern)
+    |> validate_format(:avatar_url, @image_url_pattern)
+    |> validate_length(:username, min: 3, max: 30)
+    |> unique_constraint([:username])
+    |> unique_constraint([:email])
+    |> put_encrypted_password()
+  end
 
   def email_format(email) do
     %__MODULE__{}
@@ -51,7 +65,8 @@ defmodule Maychat.Schemas.User do
 
   defp put_encrypted_password(
          %Ecto.Changeset{valid?: true, changes: %{password: plain_pwd}} = changeset
-       ) do
+       )
+       when not is_nil(plain_pwd) do
     put_change(
       changeset,
       :encrypted_password,

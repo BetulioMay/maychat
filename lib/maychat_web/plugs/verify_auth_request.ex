@@ -5,6 +5,9 @@ defmodule MaychatWeb.Plugs.VerifyAuthRequest do
   """
   alias MaychatWeb.Utils.Errors.NormalizeError
 
+  # NOTE: Is this completely necessary, nil fields are already handled by
+  # User changesets (validate_required/2)
+
   defmodule InvalidRegistrationParams do
     @moduledoc """
     Exception that is raised when registration params from a connection

@@ -38,7 +38,9 @@ defmodule MaychatWeb.Auth do
 
   def create_and_store_refresh_token(conn, user) do
     # Time-to-live ~= 1 year
-    case Guardian.encode_and_sign(user, %{"version" => Users.get_token_version_by_id!(user.id)},
+    case Guardian.encode_and_sign(
+           user,
+           %{"version" => Users.get_token_version_by_id!(user.id)},
            token_type: "refresh",
            ttl: @refresh_token_ttl
          ) do
@@ -62,7 +64,12 @@ defmodule MaychatWeb.Auth do
   end
 
   def exchange_refresh_for_access_token(refresh_token) do
-    case Guardian.exchange(refresh_token, "refresh", "access", ttl: @access_token_ttl) do
+    case Guardian.exchange(
+           refresh_token,
+           "refresh",
+           "access",
+           ttl: @access_token_ttl
+         ) do
       {:ok, _, {access_token, _claims}} ->
         {:ok, access_token}
 

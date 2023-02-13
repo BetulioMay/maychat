@@ -1,22 +1,24 @@
 defmodule Maychat.UserTest do
+  @moduledoc """
+  Test integrity of user's data
+  """
   use ExUnit.Case, async: true
+  use Maychat.RepoCase
 
   alias Maychat.Repo
   alias Maychat.Schemas.User
   alias Maychat.Contexts.Users
+  alias Maychat.Support.Factory
 
-  setup do
-    on_exit(fn ->
-      Repo.delete_all(User)
-    end)
-  end
+  # import Ecto.Changeset, only: [change: 2]
 
-  @doc """
-  User registration module testing.
+  # setup do
+  #   on_exit(fn ->
+  #     Repo.delete_all(User)
+  #   end)
+  # end
 
-  Tests against creation process of a new user
-  """
-  describe "register a new user" do
+  describe "create a new user" do
     test "with valid information" do
       # Pre-count of users before registration
       pre_count = count_of(User)
@@ -99,6 +101,100 @@ defmodule Maychat.UserTest do
       assert {:error, _} = result
       assert pre_count == count_of(User)
     end
+
+    test "with proper username" do
+      # Length should be at least 3 and no more than 15
+      short = "a"
+
+      params =
+        valid_user_params()
+        |> Map.update!(:username, fn _ -> short end)
+
+      assert {:error, %Ecto.Changeset{}} = Users.create_user(params)
+
+      long = "prrrrreeeetttttyyyy_looooong_username"
+      params = params |> Map.update!(:username, fn _ -> long end)
+
+      assert {:error, %Ecto.Changeset{}} = Users.create_user(params)
+    end
+
+    test "with proper avatar url" do
+      invalid_url = "google.com"
+      params = valid_user_params() |> Map.update!(:avatar_url, fn _ -> invalid_url end)
+
+      assert {:error, _} = Users.create_user(params)
+    end
+  end
+
+  def create_user(_context), do: {:ok, user: Factory.create(:user)}
+
+  describe "edit a user" do
+    setup :create_user
+
+    test "by changing username", %{user: user} do
+      %User{username: old} = user
+      new = old <> "_new"
+
+      {:ok, updated} = Users.update_user(user, %{username: new})
+
+      assert updated.id == user.id
+      assert updated.username != user.username
+      assert updated.username == new
+
+      ### Existing username should fail
+
+      IO.inspect(updated, label: ">>> this is the previous")
+      IO.inspect(Factory.create(:user), label: ">>> this is the new one")
+
+      assert {:error, %Ecto.Changeset{}} =
+               Factory.create(:user)
+               |> Users.update_user(%{username: new})
+    end
+
+    test "by changing email", %{user: user} do
+      new_email = Faker.Internet.email()
+
+      {:ok, updated} = Users.update_user(user, %{email: new_email})
+
+      assert updated.id == user.id
+      assert updated.email != user.email
+      assert updated.email == new_email
+    end
+
+    test "by changing avatar", %{user: user} do
+      new_avatar_url = Faker.Internet.image_url() <> ".jpg"
+
+      {:ok, updated} = Users.update_user(user, %{avatar_url: new_avatar_url})
+
+      assert updated.id == user.id
+      assert updated.avatar_url != user.avatar_url
+      assert updated.avatar_url == new_avatar_url
+    end
+
+    test "with empty avatar", %{user: user} do
+      {:ok, updated} = Users.update_user(user, %{avatar_url: ""})
+
+      assert updated.id == user.id
+      assert updated.avatar_url == nil
+    end
+  end
+
+  describe "delete a user" do
+    setup :create_user
+
+    test "that exists", %{user: %User{id: old_id} = user} do
+      {:ok, _deleted} = Users.delete_user(user)
+
+      assert nil == Users.get_user_by_id(old_id)
+    end
+
+    test "that doesn't exist", %{user: user} do
+      {:ok, user} = Repo.delete(user)
+
+      # Because of how delete/1 works, it doesn't return
+      # a changeset, instead it raises a StaleEntryError
+      assert_raise Ecto.StaleEntryError, fn -> Users.delete_user(user) end
+    end
   end
 
   defp count_of(queryable) do
@@ -111,7 +207,7 @@ defmodule Maychat.UserTest do
       email: "cesar@mayora.com",
       password: "supersecretpwd",
       password_confirmation: "supersecretpwd",
-      avatar_url: "http://example.com"
+      avatar_url: "http://example.com/cool.png"
     }
   end
 end

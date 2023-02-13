@@ -19,7 +19,7 @@ defmodule Maychat.Mutations.User do
 
   def update_user(%User{} = user, params) do
     user
-    |> User.changeset(params)
+    |> User.edit_changeset(params)
     |> Repo.update()
   end
 

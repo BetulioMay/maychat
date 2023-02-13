@@ -8,7 +8,8 @@ defmodule Maychat.MixProject do
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      aliases: aliases()
+      aliases: aliases(),
+      elixirc_paths: elixirc_paths(Mix.env())
     ]
   end
 
@@ -28,9 +29,11 @@ defmodule Maychat.MixProject do
       {:plug, "~> 1.13"},
       {:plug_cowboy, "~> 2.0"},
       {:jason, "~> 1.3"},
+      # Authentication and authorization
       {:argon2_elixir, "~> 3.0"},
-      {:finch, "~> 0.14"},
-      {:guardian, "~> 2.3"}
+      {:guardian, "~> 2.3"},
+      # test deps
+      {:faker, "~> 0.17", only: :test}
     ]
   end
 
@@ -41,4 +44,7 @@ defmodule Maychat.MixProject do
       test: ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 end

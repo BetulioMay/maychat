@@ -7,6 +7,7 @@ export default function Button({ text }: ButtonProps) {
     <button
       className="h-full w-full rounded-md"
       onClick={() => console.log("hello")}
+      type="submit"
     >
       <span className="font-bold text-white">{text}</span>
     </button>

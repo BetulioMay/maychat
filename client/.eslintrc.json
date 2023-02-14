@@ -1,0 +1,24 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "extends": ["plugin:react/recommended", "standard-with-typescript", "next"],
+  "overrides": [],
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "root": true,
+  "plugins": ["@typescript-eslint", "react"],
+  "rules": {
+    "@typescript-eslint/member-delimiter-style": "off",
+    "@typescript-eslint/quotes": "off",
+    "@typescript-eslint/space-before-function-paren": "off",
+    "@typescript-eslint/semi": "off",
+    "@typescript-eslint/explicit-function-return-type": "off"
+  }
+}

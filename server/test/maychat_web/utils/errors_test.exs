@@ -38,8 +38,13 @@ defmodule MaychatWebTest.Utils.ErrorsTest do
       normalized_for_str = NormalizeError.normalize(str_err, some_context)
 
       assert is_map(normalized_for_atom)
+      assert is_map(normalized_for_str)
 
       assert Enum.all?(normalized_for_atom, fn {k, v} ->
+               (is_atom(k) or is_binary(k)) and is_list(v)
+             end)
+
+      assert Enum.all?(normalized_for_str, fn {k, v} ->
                (is_atom(k) or is_binary(k)) and is_list(v)
              end)
     end

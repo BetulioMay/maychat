@@ -5,7 +5,12 @@
     "node": true
   },
   "parser": "@typescript-eslint/parser",
-  "extends": ["plugin:react/recommended", "standard-with-typescript", "next"],
+  "extends": [
+    "plugin:react/recommended",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "next/core-web-vitals"
+  ],
   "overrides": [],
   "parserOptions": {
     "project": "./tsconfig.json",

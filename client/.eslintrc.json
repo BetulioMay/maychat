@@ -9,7 +9,7 @@
     "plugin:react/recommended",
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "next/core-web-vitals"
+    "next"
   ],
   "overrides": [],
   "parserOptions": {
@@ -20,10 +20,10 @@
   "root": true,
   "plugins": ["@typescript-eslint", "react"],
   "rules": {
-    "@typescript-eslint/member-delimiter-style": "off",
-    "@typescript-eslint/quotes": "off",
-    "@typescript-eslint/space-before-function-paren": "off",
-    "@typescript-eslint/semi": "off",
-    "@typescript-eslint/explicit-function-return-type": "off"
+    // "@typescript-eslint/member-delimiter-style": "off",
+    // "@typescript-eslint/quotes": "off",
+    // "@typescript-eslint/space-before-function-paren": "off",
+    // "@typescript-eslint/semi": "off",
+    // "@typescript-eslint/explicit-function-return-type": "off"
   }
 }

@@ -21,12 +21,6 @@ import {
 //   );
 // }
 
-/*
-<Button 
-value="Press me"
-handleClick={() => console.log("You pressed me! Yay")}
-/>
-*/
 interface ButtonProps {
   value: string;
   handleClick: MouseEventHandler<HTMLButtonElement> | undefined;

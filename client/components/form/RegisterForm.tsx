@@ -2,7 +2,7 @@
 import Link from "next/link";
 import Button from "components/Button";
 import { Field, Form, Formik } from "formik";
-import InputField from "../InputField";
+import InputField from "components/InputField";
 import type { RegisterFormValues, RegisterErrorValues } from "types/form";
 
 // TODO: Make this play with the server's API

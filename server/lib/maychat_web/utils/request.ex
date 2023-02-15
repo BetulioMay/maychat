@@ -12,6 +12,7 @@ defmodule MaychatWeb.Utils.Request do
     # body_params = %{
     #   "test1" => "test1",
     #   "test2" => 1000,
+    #   "remember_me" => true,
     #   "test3" => %{"test3_1" => ["test", "hello"]}
     # }
     %Plug.Conn{

@@ -30,6 +30,7 @@ defmodule MaychatWeb.Controllers.RefreshTokenController do
   end
 
   import Plug.Conn
+  import Ecto.Query
   alias MaychatWeb.Auth
   alias MaychatWeb.Guardian
   alias Maychat.Contexts.Users
@@ -39,11 +40,17 @@ defmodule MaychatWeb.Controllers.RefreshTokenController do
   def call(conn, _opts), do: conn |> refresh()
 
   defp refresh(conn) do
+    # NOTE: this could be accessed directly from the cookie
     %Plug.Conn{assigns: %{refresh_token: refresh_token}} = conn
 
     %{claims: %{"version" => token_version, "sub" => user_id}} = Guardian.peek(refresh_token)
 
     current_version = get_current_token_version!(user_id)
+
+    # TODO: Change this
+    query = from(u in Maychat.Schemas.User, where: u.id == ^user_id, select: u.remember_me)
+
+    remember_me = Maychat.Repo.one!(query)
 
     if token_version != current_version do
       raise(InvalidTokenVersion, "token version is invalid")
@@ -51,10 +58,14 @@ defmodule MaychatWeb.Controllers.RefreshTokenController do
 
     {:ok, access_token} = Auth.exchange_refresh_for_access_token(refresh_token)
 
-    conn
     # Refresh token will always be valid if the user keep using the API
-    # or the token is invalidated
-    |> Auth.refresh_refresh_token(refresh_token)
+    # or the token is invalidated, unless remember me preference is off
+    conn =
+      if remember_me,
+        do: Auth.refresh_refresh_token(conn, refresh_token),
+        else: conn
+
+    conn
     |> send_resp(
       200,
       Jason.encode!(%{

@@ -12,7 +12,8 @@ defmodule Maychat.Schemas.User do
           email: String.t(),
           encrypted_password: String.t(),
           avatar_url: String.t(),
-          token_version: integer()
+          token_version: integer(),
+          remember_me: boolean()
         }
 
   schema "users" do
@@ -22,13 +23,14 @@ defmodule Maychat.Schemas.User do
     field(:encrypted_password, :string)
     field(:avatar_url, :string)
     field(:token_version, :integer)
+    field(:remember_me, :boolean, default: false)
 
     timestamps()
   end
 
   def changeset(struct, params) do
     struct
-    |> cast(params, [:username, :email, :password, :avatar_url])
+    |> cast(params, [:username, :email, :password, :avatar_url, :remember_me])
     |> validate_required([:username, :email, :password])
     |> validate_confirmation(:password, required: true)
     |> validate_format(:email, @email_pattern)
@@ -46,7 +48,8 @@ defmodule Maychat.Schemas.User do
       :username,
       :email,
       :password,
-      :avatar_url
+      :avatar_url,
+      :remember_me
     ])
     |> validate_required([:username, :email])
     |> validate_format(:email, @email_pattern)

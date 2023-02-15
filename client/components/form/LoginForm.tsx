@@ -3,7 +3,8 @@ import { LoginFormValues, LoginErrorValues } from "types/form";
 import { Field, Form, Formik } from "formik";
 import Link from "next/link";
 import Button from "../Button";
-import InputField from "../InputField";
+import TextInput from "../TextInput";
+import Checkbox from "../Checkbox";
 
 export default function LoginForm() {
   const initialValues: LoginFormValues = {
@@ -45,7 +46,7 @@ export default function LoginForm() {
                   label="Username or email"
                   type="text"
                   placeholder="Username or email"
-                  component={InputField}
+                  component={TextInput}
                 />
               </div>
               <div className="flex flex-col">
@@ -54,11 +55,20 @@ export default function LoginForm() {
                   label="Password"
                   type="password"
                   placeholder="Password"
-                  component={InputField}
+                  component={TextInput}
                 />
               </div>
             </div>
-            <div className="h-10 w-full rounded-md bg-green-600 transition-all hover:bg-green-700">
+            <div className="ml-1 flex items-center justify-start gap-2">
+              <Field
+                name="rememberMe"
+                label="Remember me"
+                type="checkbox"
+                component={Checkbox}
+              />
+            </div>
+
+            <div className="h-10 w-full rounded-md bg-green-500 transition-all hover:bg-green-700">
               <Button
                 className="h-full w-full font-bold text-white"
                 value="Log in"

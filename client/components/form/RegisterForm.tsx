@@ -2,8 +2,9 @@
 import Link from "next/link";
 import Button from "components/Button";
 import { Field, Form, Formik } from "formik";
-import InputField from "components/InputField";
+import TextInput from "@/components/TextInput";
 import type { RegisterFormValues, RegisterErrorValues } from "types/form";
+import Checkbox from "../Checkbox";
 
 // TODO: Make this play with the server's API
 // same with ./LoginForm.tsx
@@ -55,7 +56,7 @@ export default function RegisterForm() {
                   label="Username"
                   type="text"
                   placeholder="Username"
-                  component={InputField}
+                  component={TextInput}
                 />
               </div>
               <div className="flex flex-col">
@@ -64,7 +65,7 @@ export default function RegisterForm() {
                   label="Email"
                   placeholder="Email"
                   type="email"
-                  component={InputField}
+                  component={TextInput}
                 />
               </div>
               <div className="flex gap-2">
@@ -74,7 +75,7 @@ export default function RegisterForm() {
                     label="Password"
                     placeholder="Password"
                     type="password"
-                    component={InputField}
+                    component={TextInput}
                   />
                 </div>
                 <div className="flex flex-col">
@@ -83,11 +84,21 @@ export default function RegisterForm() {
                     label="Confirm password"
                     placeholder="Confirm password"
                     type="password"
-                    component={InputField}
+                    component={TextInput}
                   />
                 </div>
               </div>
             </div>
+
+            <div className="ml-1 flex items-center justify-start gap-2">
+              <Field
+                component={Checkbox}
+                name="rememberMe"
+                label="Remember me"
+                type="checkbox"
+              />
+            </div>
+
             <div className="h-10 w-full rounded-md bg-green-600 transition-all hover:bg-green-700">
               <Button
                 className="h-full w-full font-bold text-white"

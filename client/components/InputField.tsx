@@ -18,15 +18,22 @@ interface OtherProps {
 
 const InputField = ({
   label,
+  form: { touched, errors },
   field,
   ...props
 }: FieldProps & InputProps & OtherProps) => {
+  const error = touched[field.name] && errors[field.name];
   return (
     <>
       <label className="m-2" htmlFor={props.name}>
         {label}
       </label>
       <input className="rounded-xl p-2 shadow-md" {...field} {...props} />
+      {error ? (
+        <div className="font-thin text-red-600">
+          {errors[field.name] as string}
+        </div>
+      ) : null}
     </>
   );
 };

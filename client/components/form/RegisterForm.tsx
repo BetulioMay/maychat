@@ -3,25 +3,43 @@ import Link from "next/link";
 import Button from "components/Button";
 import { Field, Form, Formik } from "formik";
 import InputField from "../InputField";
+import type { RegisterFormValues, RegisterErrorValues } from "types/form";
 
-interface RegisterFormValues {
-  username: string;
-  email: string;
-  password: string;
-  passwordConfirmation: string;
-}
+// TODO: Make this play with the server's API
+// same with ./LoginForm.tsx
 
-export default function RegisterForm2() {
+export default function RegisterForm() {
   const initialValues: RegisterFormValues = {
     username: "",
     email: "",
     password: "",
     passwordConfirmation: "",
   };
+  const validateRequired = (values: RegisterFormValues) => {
+    const errors: RegisterErrorValues = {} as RegisterErrorValues;
+
+    if (!values.username) {
+      errors.username = "Field is required";
+    }
+    if (!values.email) {
+      errors.email = "Field is required";
+    }
+    if (!values.password) {
+      errors.password = "Field is required";
+    }
+    if (!values.passwordConfirmation) {
+      errors.passwordConfirmation = "Field is required";
+    }
+
+    return errors;
+  };
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={(values) => alert(JSON.stringify(values, null, 2))}
+      validate={validateRequired}
+      onSubmit={(values: RegisterFormValues) =>
+        alert(JSON.stringify(values, null, 2))
+      }
     >
       <section className="flex min-h-screen items-center justify-center bg-white">
         <div className="flex flex-col items-center justify-center gap-6 rounded-2xl bg-cyan-200 p-4 shadow-sm shadow-cyan-400">
@@ -61,7 +79,7 @@ export default function RegisterForm2() {
                 </div>
                 <div className="flex flex-col">
                   <Field
-                    name="confirmPassword"
+                    name="passwordConfirmation"
                     label="Confirm password"
                     placeholder="Confirm password"
                     type="password"
@@ -71,7 +89,12 @@ export default function RegisterForm2() {
               </div>
             </div>
             <div className="h-10 w-full rounded-md bg-green-600 transition-all hover:bg-green-700">
-              <Button text="Sign Up" />
+              <Button
+                className="h-full w-full font-bold text-white"
+                value="Sign up"
+                handleClick={() => null}
+                type="submit"
+              />
             </div>
           </Form>
           <div>

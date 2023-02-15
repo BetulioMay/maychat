@@ -1,15 +1,51 @@
 "use client";
+
+import {
+  DetailedHTMLProps,
+  ButtonHTMLAttributes,
+  MouseEventHandler,
+} from "react";
+
+// interface ButtonProps {
+//   text: string;
+// }
+// export default function Button({ text }: ButtonProps) {
+//   return (
+//     <button
+//       className="h-full w-full rounded-md"
+//       onClick={() => console.log("hello")}
+//       type="submit"
+//     >
+//       <span className="font-bold text-white">{text}</span>
+//     </button>
+//   );
+// }
+
+/*
+<Button 
+value="Press me"
+handleClick={() => console.log("You pressed me! Yay")}
+/>
+*/
 interface ButtonProps {
-  text: string;
+  value: string;
+  handleClick: MouseEventHandler<HTMLButtonElement> | undefined;
 }
-export default function Button({ text }: ButtonProps) {
+
+export default function Button({
+  value,
+  handleClick,
+  ...props
+}: ButtonProps &
+  DetailedHTMLProps<
+    ButtonHTMLAttributes<HTMLButtonElement>,
+    HTMLButtonElement
+  >) {
   return (
-    <button
-      className="h-full w-full rounded-md"
-      onClick={() => console.log("hello")}
-      type="submit"
-    >
-      <span className="font-bold text-white">{text}</span>
-    </button>
+    <>
+      <button onClick={handleClick} {...props}>
+        {value}
+      </button>
+    </>
   );
 }

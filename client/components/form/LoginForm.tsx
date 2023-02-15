@@ -1,23 +1,35 @@
 "use client";
+import { LoginFormValues, LoginErrorValues } from "types/form";
 import { Field, Form, Formik } from "formik";
 import Link from "next/link";
 import Button from "../Button";
 import InputField from "../InputField";
 
-interface LoginInitialValues {
-  usernameOrEmail: string;
-  password: string;
-}
-
 export default function LoginForm() {
-  const initialValues: LoginInitialValues = {
+  const initialValues: LoginFormValues = {
     usernameOrEmail: "",
     password: "",
+  };
+  const validateRequired = (values: LoginFormValues) => {
+    const errors: LoginErrorValues = {} as LoginErrorValues;
+
+    if (!values.usernameOrEmail) {
+      errors.usernameOrEmail = "Field is required";
+    }
+
+    if (!values.password) {
+      errors.password = "Field is required";
+    }
+
+    return errors;
   };
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={(values) => alert(JSON.stringify(values, null, 2))}
+      validate={validateRequired}
+      onSubmit={(values: LoginFormValues) =>
+        alert(JSON.stringify(values, null, 2))
+      }
     >
       <section className="flex min-h-screen items-center justify-center bg-white">
         <div className="flex w-1/4 flex-col items-center justify-center gap-6 rounded-2xl bg-cyan-200 p-4 shadow-sm shadow-cyan-400">
@@ -47,7 +59,12 @@ export default function LoginForm() {
               </div>
             </div>
             <div className="h-10 w-full rounded-md bg-green-600 transition-all hover:bg-green-700">
-              <Button text="Log in" />
+              <Button
+                className="h-full w-full font-bold text-white"
+                value="Log in"
+                handleClick={() => console.log("ello")}
+                type="submit"
+              />
             </div>
           </Form>
           <div>

@@ -28,7 +28,11 @@ const TextInput = ({
       <label className="m-2" htmlFor={props.name}>
         {label}
       </label>
-      <input className="rounded-xl p-2 shadow-md" {...field} {...props} />
+      <input
+        className="rounded-xl border-2 border-purple-500 border-opacity-0 p-2 shadow-md outline-none transition-colors focus:border-opacity-100"
+        {...field}
+        {...props}
+      />
       {error ? (
         <div className="ml-2 font-thin text-red-600">
           {errors[field.name] as string}

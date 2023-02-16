@@ -68,7 +68,7 @@ export default function LoginForm() {
               />
             </div>
 
-            <div className="h-10 w-full rounded-md bg-green-500 transition-all hover:bg-green-700">
+            <div className="h-10 w-full rounded-md bg-purple-500 transition-all hover:bg-purple-800">
               <Button
                 className="h-full w-full font-bold text-white"
                 value="Log in"

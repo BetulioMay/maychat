@@ -62,7 +62,7 @@ export default function RegisterForm() {
               <div className="flex flex-col">
                 <Field
                   name="email"
-                  label="Email"
+                  label="Email address"
                   placeholder="Email"
                   type="email"
                   component={TextInput}
@@ -99,7 +99,7 @@ export default function RegisterForm() {
               />
             </div>
 
-            <div className="h-10 w-full rounded-md bg-green-600 transition-all hover:bg-green-700">
+            <div className="h-10 w-full rounded-md bg-purple-500 transition-all hover:bg-purple-800">
               <Button
                 className="h-full w-full font-bold text-white"
                 value="Sign up"

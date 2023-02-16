@@ -20,6 +20,7 @@
   "root": true,
   "plugins": ["@typescript-eslint", "react"],
   "rules": {
+    "next/no-html-link-for-pages": "off"
     // "@typescript-eslint/member-delimiter-style": "off",
     // "@typescript-eslint/quotes": "off",
     // "@typescript-eslint/space-before-function-paren": "off",

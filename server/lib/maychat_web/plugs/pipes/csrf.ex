@@ -19,7 +19,6 @@ defmodule MaychatWeb.Plugs.Pipes.CSRF do
   plug(:fetch_session)
   plug(:put_csrf_token_in_session)
   plug(Plug.CSRFProtection)
-  # plug(:debug)
 
   defp put_csrf_token_in_session(conn, _opts) do
     conn
@@ -33,6 +32,4 @@ defmodule MaychatWeb.Plugs.Pipes.CSRF do
       "d5b2hHZGsUfcYB8lImcxooaLfVBlB5bg/z9a99jjHuXTvt7yb5neykHrYEjuNFnD"
     )
   end
-
-  defp debug(conn, _), do: IO.inspect(conn)
 end

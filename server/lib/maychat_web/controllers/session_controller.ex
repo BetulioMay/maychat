@@ -108,7 +108,7 @@ defmodule MaychatWeb.Controllers.SessionController do
 
   #   with {:ok, user} <- validate_user_fetched(login_params[:username_email]),
   #        {:ok, _} <-
-  #          validate_password_matching(login_params[:password], Users.get_encrypted_pwd!(user)) do
+  #          validate_password_matching(login_params[:password], Users.get_hashed_pwd!(user)) do
   #     # IDEA: All the logic here for authenticating a user,
   #     # abstract it to use it on register controller too
 

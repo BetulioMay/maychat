@@ -12,7 +12,7 @@ defmodule Maychat.Contexts.Users do
   ## Queries
   defdelegate get_user_by_username_email(username_email), to: Queries.User
   defdelegate get_user_by_id(id), to: Queries.User
-  defdelegate get_encrypted_pwd!(user), to: Queries.User
+  defdelegate get_hashed_pwd!(user), to: Queries.User
   defdelegate get_token_version_by_id!(id), to: Queries.User
   defdelegate list_users(), to: Queries.User
 

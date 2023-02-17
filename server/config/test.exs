@@ -10,3 +10,5 @@ config :maychat, Maychat.Repo,
   hostname: "localhost",
   port: "5432",
   pool: Ecto.Adapters.SQL.Sandbox
+
+config :plug, :validate_header_keys_during_test, false

@@ -17,9 +17,10 @@ defmodule MaychatWeb.Auth do
   @spec authenticate_user(%{String.t() => any()}) ::
           {:ok, User.t()} | {:error, :invalid_credentials}
   def(authenticate_user(params)) do
-    # username_email = if params["email"], do: params["email"], else: params["username"]
-    username_email = get_username_email(params)
-    choose_remember_me = params["remember_me"] || params[:remember_me]
+    params = normalize_params(params)
+
+    username_email = if params["email"], do: params["email"], else: params["username"]
+    choose_remember_me = params["remember_me"]
 
     case Users.get_user_by_username_email(username_email) do
       nil ->
@@ -27,9 +28,7 @@ defmodule MaychatWeb.Auth do
         {:error, :invalid_credentials}
 
       %User{} = user ->
-        password = params["password"] || params[:password]
-
-        if Argon2.verify_pass(password, Users.get_hashed_pwd!(user)) do
+        if Argon2.verify_pass(params["password"], Users.get_hashed_pwd!(user)) do
           if user.remember_me != choose_remember_me do
             # Update user.remember_me
             {:ok, updated} =
@@ -46,6 +45,12 @@ defmodule MaychatWeb.Auth do
           {:error, :invalid_credentials}
         end
     end
+  end
+
+  defp normalize_params(params) do
+    params
+    |> Enum.map(fn {k, v} -> {to_string(k), v} end)
+    |> Enum.into(%{})
   end
 
   def create_access_token(user) do
@@ -117,14 +122,6 @@ defmodule MaychatWeb.Auth do
       secure: true,
       max_age: max_age
     )
-  end
-
-  defp get_username_email(params) do
-    if params["email"] || params[:email] do
-      params["email"] || params[:email]
-    else
-      params["username"] || params[:username]
-    end
   end
 
   # def get_resource_from_conn(conn), do: conn |> Guardian.Plug.current_resource()

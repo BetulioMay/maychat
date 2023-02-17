@@ -45,12 +45,9 @@ defmodule MaychatWeb.Controllers.RefreshTokenController do
 
     %{claims: %{"version" => token_version, "sub" => user_id}} = Guardian.peek(refresh_token)
 
+    # IDEA: do this a single transaction
     current_version = get_current_token_version!(user_id)
-
-    # TODO: Change this
-    query = from(u in Maychat.Schemas.User, where: u.id == ^user_id, select: u.remember_me)
-
-    remember_me = Maychat.Repo.one!(query)
+    remember_me = get_remember_me_pref(user_id)
 
     if token_version != current_version do
       raise(InvalidTokenVersion, "token version is invalid")
@@ -83,6 +80,18 @@ defmodule MaychatWeb.Controllers.RefreshTokenController do
       _e -> raise("Unexpected error")
     else
       current_version -> current_version
+    end
+  end
+
+  defp get_remember_me_pref(user_id) do
+    try do
+      query = from(u in Maychat.Schemas.User, where: u.id == ^user_id, select: u.remember_me)
+
+      Maychat.Repo.one!(query)
+    rescue
+      Ecto.NoResultsError -> raise(ResourceNotFound, "resource not found")
+    else
+      remember_me -> remember_me
     end
   end
 end

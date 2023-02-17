@@ -22,9 +22,9 @@ defmodule MaychatWeb.Controllers.RegistrationController do
 
   # Plug boilerplate
   def init(opts), do: opts
-  def call(conn, _opts), do: conn |> register
+  def call(conn, opts), do: conn |> register(opts)
 
-  defp register(conn) do
+  defp register(conn, _opts) do
     {:ok, reg_params, conn} = fetch_params_from_conn(conn, @params)
 
     # Displays the plain password!!.

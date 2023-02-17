@@ -6,6 +6,10 @@ defmodule MaychatWeb.Auth do
 
   @access_token_ttl {15, :seconds}
   @refresh_token_ttl {4 * 12, :weeks}
+  @refresh_token_id "jid"
+
+  # TODO: change params["<param>"] || params[:<params>] to be normalized,
+  # use Functors or so to map string keys into atom keys or viceversa.
 
   @doc """
   Authenticates a user given its login params.
@@ -13,16 +17,31 @@ defmodule MaychatWeb.Auth do
   @spec authenticate_user(%{String.t() => any()}) ::
           {:ok, User.t()} | {:error, :invalid_credentials}
   def(authenticate_user(params)) do
-    username_email = if params["email"], do: params["email"], else: params["username"]
+    # username_email = if params["email"], do: params["email"], else: params["username"]
+    username_email = get_username_email(params)
+    choose_remember_me = params["remember_me"] || params[:remember_me]
 
     case Users.get_user_by_username_email(username_email) do
       nil ->
         Argon2.no_user_verify()
         {:error, :invalid_credentials}
 
-      user ->
-        if Argon2.verify_pass(params["password"], Users.get_encrypted_pwd!(user)) do
-          {:ok, user}
+      %User{} = user ->
+        password = params["password"] || params[:password]
+
+        if Argon2.verify_pass(password, Users.get_hashed_pwd!(user)) do
+          if user.remember_me != choose_remember_me do
+            # Update user.remember_me
+            {:ok, updated} =
+              Users.update_user(
+                user,
+                %{remember_me: choose_remember_me}
+              )
+
+            {:ok, updated}
+          else
+            {:ok, user}
+          end
         else
           {:error, :invalid_credentials}
         end
@@ -36,7 +55,7 @@ defmodule MaychatWeb.Auth do
     end
   end
 
-  def create_and_store_refresh_token(conn, user) do
+  def create_and_store_refresh_token(conn, user = %User{}) do
     # Time-to-live ~= 1 year
     case Guardian.encode_and_sign(
            user,
@@ -45,8 +64,11 @@ defmodule MaychatWeb.Auth do
            ttl: @refresh_token_ttl
          ) do
       {:ok, refresh_token, _claims} ->
-        conn = put_refresh_cookie(conn, refresh_token)
-        {:ok, conn, refresh_token}
+        {
+          :ok,
+          put_refresh_cookie(conn, refresh_token, user.remember_me),
+          refresh_token
+        }
 
       error ->
         error
@@ -83,17 +105,27 @@ defmodule MaychatWeb.Auth do
     Guardian.revoke(refresh_token)
   end
 
-  defp put_refresh_cookie(conn, refresh_token) do
+  defp put_refresh_cookie(conn, refresh_token, remember \\ true) do
+    max_age = if remember, do: 24 * 60 * 60 * 1000, else: 2 * 60 * 60
+
     conn
     |> put_resp_cookie(
-      "jid",
+      @refresh_token_id,
       refresh_token,
       http_only: true,
       same_site: false,
       secure: true,
-      max_age: 24 * 60 * 60 * 1000
+      max_age: max_age
     )
   end
 
-  def get_resource_from_conn(conn), do: conn |> Guardian.Plug.current_resource()
+  defp get_username_email(params) do
+    if params["email"] || params[:email] do
+      params["email"] || params[:email]
+    else
+      params["username"] || params[:username]
+    end
+  end
+
+  # def get_resource_from_conn(conn), do: conn |> Guardian.Plug.current_resource()
 end

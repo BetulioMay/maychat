@@ -22,7 +22,8 @@ defmodule MaychatWeb.Plugs.CheckRefreshToken do
   end
 
   defp verify_and_assign_refresh_token(%Plug.Conn{cookies: cookies} = conn, opts) do
-    %{"jid" => refresh_token} = cookies
+    refresh_token = cookies["jid"] || ""
+    IO.inspect(cookies)
 
     case Guardian.decode_and_verify(refresh_token, %{"typ" => "refresh"}) do
       {:ok, _claims} ->
@@ -36,6 +37,7 @@ defmodule MaychatWeb.Plugs.CheckRefreshToken do
           {:unauthenticated, "refresh token is invalid"},
           opts
         )
+        |> halt()
     end
   end
 end

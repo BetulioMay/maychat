@@ -6,7 +6,7 @@ defmodule MaychatWeb.Controllers.SessionController do
 
   import MaychatWeb.Utils.Request
 
-  @login_params ~w(username email password)
+  @login_params ~w(username email password remember_me)
 
   defmodule LoginRequestError do
     defexception [:message, plug_status: 400]
@@ -60,6 +60,8 @@ defmodule MaychatWeb.Controllers.SessionController do
     {:ok, access_token} = Auth.create_access_token(user)
     {:ok, conn, _refresh_token} = Auth.create_and_store_refresh_token(conn, user)
 
+    IO.inspect(conn)
+
     conn
     |> send_resp(
       conn.status || 200,
@@ -106,7 +108,7 @@ defmodule MaychatWeb.Controllers.SessionController do
 
   #   with {:ok, user} <- validate_user_fetched(login_params[:username_email]),
   #        {:ok, _} <-
-  #          validate_password_matching(login_params[:password], Users.get_encrypted_pwd!(user)) do
+  #          validate_password_matching(login_params[:password], Users.get_hashed_pwd!(user)) do
   #     # IDEA: All the logic here for authenticating a user,
   #     # abstract it to use it on register controller too
 

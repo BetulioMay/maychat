@@ -10,25 +10,27 @@ defmodule Maychat.Schemas.User do
           id: integer(),
           username: String.t(),
           email: String.t(),
-          encrypted_password: String.t(),
+          password_hash: String.t(),
           avatar_url: String.t(),
-          token_version: integer()
+          token_version: integer(),
+          remember_me: boolean()
         }
 
   schema "users" do
     field(:username, :string)
     field(:email, :string)
     field(:password, :string, virtual: true, redact: true)
-    field(:encrypted_password, :string)
+    field(:password_hash, :string)
     field(:avatar_url, :string)
     field(:token_version, :integer)
+    field(:remember_me, :boolean, default: false)
 
     timestamps()
   end
 
   def changeset(struct, params) do
     struct
-    |> cast(params, [:username, :email, :password, :avatar_url])
+    |> cast(params, [:username, :email, :password, :avatar_url, :remember_me])
     |> validate_required([:username, :email, :password])
     |> validate_confirmation(:password, required: true)
     |> validate_format(:email, @email_pattern)
@@ -36,7 +38,7 @@ defmodule Maychat.Schemas.User do
     |> validate_length(:username, min: 3, max: 30)
     |> unique_constraint([:username])
     |> unique_constraint([:email])
-    |> put_encrypted_password()
+    |> put_password_hash()
   end
 
   # TODO: Make user be able to change their passwords
@@ -46,7 +48,8 @@ defmodule Maychat.Schemas.User do
       :username,
       :email,
       :password,
-      :avatar_url
+      :avatar_url,
+      :remember_me
     ])
     |> validate_required([:username, :email])
     |> validate_format(:email, @email_pattern)
@@ -54,7 +57,7 @@ defmodule Maychat.Schemas.User do
     |> validate_length(:username, min: 3, max: 30)
     |> unique_constraint([:username])
     |> unique_constraint([:email])
-    |> put_encrypted_password()
+    |> put_password_hash()
   end
 
   def email_format(email) do
@@ -63,16 +66,16 @@ defmodule Maychat.Schemas.User do
     |> validate_format(:email, @email_pattern)
   end
 
-  defp put_encrypted_password(
+  defp put_password_hash(
          %Ecto.Changeset{valid?: true, changes: %{password: plain_pwd}} = changeset
        )
        when not is_nil(plain_pwd) do
     put_change(
       changeset,
-      :encrypted_password,
+      :password_hash,
       Argon2.hash_pwd_salt(plain_pwd) |> Base.encode16()
     )
   end
 
-  defp put_encrypted_password(changeset), do: changeset
+  defp put_password_hash(changeset), do: changeset
 end

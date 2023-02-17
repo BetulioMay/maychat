@@ -6,7 +6,7 @@ import {
   LabelHTMLAttributes,
 } from "react";
 
-type InputProps = DetailedHTMLProps<
+type TextInputProps = DetailedHTMLProps<
   LabelHTMLAttributes<HTMLLabelElement>,
   HTMLLabelElement
 > &
@@ -16,21 +16,25 @@ interface OtherProps {
   label: string;
 }
 
-const InputField = ({
+const TextInput = ({
   label,
   form: { touched, errors },
   field,
   ...props
-}: FieldProps & InputProps & OtherProps) => {
+}: FieldProps & TextInputProps & OtherProps) => {
   const error = touched[field.name] && errors[field.name];
   return (
     <>
       <label className="m-2" htmlFor={props.name}>
         {label}
       </label>
-      <input className="rounded-xl p-2 shadow-md" {...field} {...props} />
+      <input
+        className="rounded-xl border-2 border-purple-500 border-opacity-0 p-2 shadow-md outline-none transition-colors focus:border-opacity-100"
+        {...field}
+        {...props}
+      />
       {error ? (
-        <div className="font-thin text-red-600">
+        <div className="ml-2 font-thin text-red-600">
           {errors[field.name] as string}
         </div>
       ) : null}
@@ -38,4 +42,4 @@ const InputField = ({
   );
 };
 
-export default InputField;
+export default TextInput;

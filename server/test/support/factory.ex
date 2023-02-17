@@ -15,23 +15,34 @@ defmodule Maychat.Support.Factory do
   alias Maychat.Schemas.User
 
   def create(:user) do
-    some_user_params = %{
-      username: Faker.Internet.user_name(),
-      email: Faker.Internet.free_email(),
-      password: Faker.Lorem.word(),
-      avatar_url: Faker.Avatar.image_url() <> ".jpg"
-    }
-
+    some_user_params = get_valid_params()
     confirmation = Map.get(some_user_params, :password)
 
     # IO.inspect(@some_user_params, label: "some user params")
     # IO.inspect(confirmation, label: "confirmation password")
+
+    %User{}
+    |> User.changeset(Map.put(some_user_params, :password_confirmation, confirmation))
+    |> Repo.insert!(returning: true)
+  end
+
+  def create_and_params(:user) do
+    some_user_params = get_valid_params()
+    confirmation = Map.get(some_user_params, :password)
 
     user =
       %User{}
       |> User.changeset(Map.put(some_user_params, :password_confirmation, confirmation))
       |> Repo.insert!(returning: true)
 
-    user
+    {user, some_user_params}
   end
+
+  defp get_valid_params(),
+    do: %{
+      username: Faker.Internet.user_name(),
+      email: Faker.Internet.free_email(),
+      password: Faker.Lorem.word(),
+      avatar_url: Faker.Avatar.image_url() <> ".jpg"
+    }
 end

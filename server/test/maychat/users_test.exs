@@ -55,11 +55,11 @@ defmodule Maychat.UsersTest do
     assert Users.get_user_by_id(-1) == nil
   end
 
-  test "get_encrypted_pwd!/1", %{user: user} do
+  test "get_hashed_pwd!/1", %{user: user} do
     # Password should be a hash
-    %User{encrypted_password: encoded} = user
+    %User{password_hash: encoded} = user
 
-    hash = Users.get_encrypted_pwd!(user)
+    hash = Users.get_hashed_pwd!(user)
 
     # Encoded is always two times the hash since is base16 encoding (hex)
     assert String.length(hash) * 2 == String.length(encoded)
@@ -67,10 +67,10 @@ defmodule Maychat.UsersTest do
     # no valid encoded password will raise an error
     invalid_user =
       struct(User, %{
-        encrypted_password: "GJKLRJTKLG"
+        password_hash: "GJKLRJTKLG"
       })
 
-    assert_raise(ArgumentError, fn -> Users.get_encrypted_pwd!(invalid_user) end)
+    assert_raise(ArgumentError, fn -> Users.get_hashed_pwd!(invalid_user) end)
   end
 
   describe "get_token_version_by_id!/1" do

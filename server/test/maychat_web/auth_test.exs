@@ -2,7 +2,6 @@ defmodule MaychatWeb.AuthTest do
   use ExUnit.Case, async: true
   use Maychat.RepoCase
 
-  alias Maychat.Schemas.User
   alias Maychat.Support.Factory
   alias MaychatWeb.Auth
 
@@ -83,12 +82,13 @@ defmodule MaychatWeb.AuthTest do
       assert {:error, :invalid_credentials} = should_fail_empty
 
       # incorrect password is (obviously) invalid
-      incorrect_pwd = Faker.String.base64(10)
+      incorrect_pwd = Faker.String.naughty()
 
       should_fail_incorrect =
         params
         |> Map.take([:email])
         |> Map.put(:password, incorrect_pwd)
+        |> Auth.authenticate_user()
 
       refute incorrect_pwd == params.password
       assert {:error, :invalid_credentials} = should_fail_incorrect

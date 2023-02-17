@@ -21,7 +21,7 @@ defmodule Maychat.Queries.User do
   end
 
   @spec get_hashed_pwd!(User.t()) :: binary()
-  def get_hashed_pwd!(%User{hashed_password: hashed}), do: Base.decode16!(hashed)
+  def get_hashed_pwd!(%User{password_hash: hashed}), do: Base.decode16!(hashed)
 
   def get_token_version_by_id!(id) do
     query =

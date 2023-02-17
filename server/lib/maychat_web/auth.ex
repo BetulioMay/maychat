@@ -8,14 +8,18 @@ defmodule MaychatWeb.Auth do
   @refresh_token_ttl {4 * 12, :weeks}
   @refresh_token_id "jid"
 
+  # TODO: change params["<param>"] || params[:<params>] to be normalized,
+  # use Functors or so to map string keys into atom keys or viceversa.
+
   @doc """
   Authenticates a user given its login params.
   """
   @spec authenticate_user(%{String.t() => any()}) ::
           {:ok, User.t()} | {:error, :invalid_credentials}
   def(authenticate_user(params)) do
-    username_email = if params["email"], do: params["email"], else: params["username"]
-    choose_remember_me = params["remember_me"]
+    # username_email = if params["email"], do: params["email"], else: params["username"]
+    username_email = get_username_email(params)
+    choose_remember_me = params["remember_me"] || params[:remember_me]
 
     case Users.get_user_by_username_email(username_email) do
       nil ->
@@ -23,7 +27,9 @@ defmodule MaychatWeb.Auth do
         {:error, :invalid_credentials}
 
       %User{} = user ->
-        if Argon2.verify_pass(params["password"], Users.get_encrypted_pwd!(user)) do
+        password = params["password"] || params[:password]
+
+        if Argon2.verify_pass(password, Users.get_hashed_pwd!(user)) do
           if user.remember_me != choose_remember_me do
             # Update user.remember_me
             {:ok, updated} =
@@ -113,5 +119,13 @@ defmodule MaychatWeb.Auth do
     )
   end
 
-  def get_resource_from_conn(conn), do: conn |> Guardian.Plug.current_resource()
+  defp get_username_email(params) do
+    if params["email"] || params[:email] do
+      params["email"] || params[:email]
+    else
+      params["username"] || params[:username]
+    end
+  end
+
+  # def get_resource_from_conn(conn), do: conn |> Guardian.Plug.current_resource()
 end

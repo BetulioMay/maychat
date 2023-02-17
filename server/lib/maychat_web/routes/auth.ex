@@ -34,13 +34,6 @@ defmodule MaychatWeb.Routes.Auth do
   post("/refresh", to: RefreshTokenController)
 
   match _ do
-    # TODO: prepare_error_payloads()?? Maybe????
-    # Could work if we make kind of a protocol for error
-    # normalization.
-    # err_payload = %{
-    #   success: false,
-    #   errors: normalize_string_err("")
-    # }
     %Plug.Conn{request_path: req_path} = conn
     raise(MaychatWeb.Router.PathNotFoundError, req_path)
   end

@@ -143,9 +143,6 @@ defmodule Maychat.UserTest do
 
       ### Existing username should fail
 
-      IO.inspect(updated, label: ">>> this is the previous")
-      IO.inspect(Factory.create(:user), label: ">>> this is the new one")
-
       assert {:error, %Ecto.Changeset{}} =
                Factory.create(:user)
                |> Users.update_user(%{username: new})

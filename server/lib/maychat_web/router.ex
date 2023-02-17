@@ -32,8 +32,16 @@ defmodule MaychatWeb.Router do
     plug(Plug.Logger, log: :info)
   end
 
+  plug(Plug.Parsers,
+    pass: ["text/plain", "application/json"],
+    parsers: [{:json, json_decoder: Jason}]
+  )
+
+  # CSRF protection
+  plug(Pipes.CSRF)
   plug(:match)
 
+  # NOTE: this obviously is for testing purposes
   plug(Pipes.EnsureAuth, paths: ["/protected"])
 
   plug(:dispatch)

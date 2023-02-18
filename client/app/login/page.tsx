@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 
-const LoginForm = dynamic(() => import("@/components/forms/LoginForm"), {
+const LoginForm = dynamic(() => import("components/forms/LoginForm"), {
   ssr: false,
 });
 

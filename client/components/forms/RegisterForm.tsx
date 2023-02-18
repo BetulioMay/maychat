@@ -1,15 +1,14 @@
 "use client";
+import { Formik, Form, Field } from "formik";
+import React from "react";
 import Link from "next/link";
+import FormCard from "./FormCard";
+import TextInput from "components/TextInput";
 import Button from "components/Button";
-import { Field, Form, Formik } from "formik";
-import TextInput from "@/components/TextInput";
+import Checkbox from "components/Checkbox";
 import type { RegisterFormValues, RegisterErrorValues } from "types/form";
-import Checkbox from "../Checkbox";
 
-// TODO: Make this play with the server's API
-// same with ./LoginForm.tsx
-
-export default function RegisterForm() {
+const RegisterForm: React.FC = () => {
   const initialValues: RegisterFormValues = {
     username: "",
     email: "",
@@ -42,80 +41,76 @@ export default function RegisterForm() {
         alert(JSON.stringify(values, null, 2))
       }
     >
-      <section className="flex min-h-screen items-center justify-center bg-white">
-        <div className="flex flex-col items-center justify-center gap-6 rounded-2xl bg-cyan-200 p-4 shadow-sm shadow-cyan-400">
-          <div className="flex w-full justify-center border-b border-solid border-gray-400 p-2 text-center">
-            <span className="text-2xl font-medium">Register</span>
-          </div>
-
-          <Form className="flex w-full flex-col gap-6">
-            <div className="flex flex-col justify-center gap-2">
-              <div className="flex flex-col">
-                <Field
-                  name="username"
-                  label="Username"
-                  type="text"
-                  placeholder="Username"
-                  component={TextInput}
-                />
-              </div>
-              <div className="flex flex-col">
-                <Field
-                  name="email"
-                  label="Email address"
-                  placeholder="Email"
-                  type="email"
-                  component={TextInput}
-                />
-              </div>
-              <div className="flex gap-2">
-                <div className="flex flex-col">
-                  <Field
-                    name="password"
-                    label="Password"
-                    placeholder="Password"
-                    type="password"
-                    component={TextInput}
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <Field
-                    name="passwordConfirmation"
-                    label="Confirm password"
-                    placeholder="Confirm password"
-                    type="password"
-                    component={TextInput}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="ml-1 flex items-center justify-start gap-2">
+      <FormCard label="Register">
+        <Form className="flex w-full flex-col gap-6">
+          <div className="flex flex-col justify-center gap-2">
+            <div className="flex flex-col">
               <Field
-                component={Checkbox}
-                name="rememberMe"
-                label="Remember me"
-                type="checkbox"
+                name="username"
+                label="Username"
+                type="text"
+                placeholder="Username"
+                component={TextInput}
               />
             </div>
-
-            <div className="h-10 w-full rounded-md bg-purple-500 transition-all hover:bg-purple-800">
-              <Button
-                className="h-full w-full font-bold text-white"
-                value="Sign up"
-                handleClick={() => null}
-                type="submit"
+            <div className="flex flex-col">
+              <Field
+                name="email"
+                label="Email address"
+                placeholder="Email"
+                type="email"
+                component={TextInput}
               />
             </div>
-          </Form>
-          <div>
-            Do you have an account already?{" "}
-            <Link href={"/login"}>
-              <span className="font-semibold text-purple-600">Log in</span>
-            </Link>
+            <div className="flex gap-2">
+              <div className="flex w-1/2 flex-col">
+                <Field
+                  name="password"
+                  label="Password"
+                  placeholder="Password"
+                  type="password"
+                  component={TextInput}
+                />
+              </div>
+              <div className="flex w-1/2 flex-col">
+                <Field
+                  name="passwordConfirmation"
+                  label="Confirm password"
+                  placeholder="Confirm password"
+                  type="password"
+                  component={TextInput}
+                />
+              </div>
+            </div>
           </div>
+
+          <div className="ml-1 flex items-center justify-start gap-2">
+            <Field
+              component={Checkbox}
+              name="rememberMe"
+              label="Remember me"
+              type="checkbox"
+            />
+          </div>
+
+          <div className="h-10 w-full rounded-md bg-purple-500 transition-all hover:bg-purple-800">
+            <Button
+              className="h-full w-full font-bold text-white"
+              value="Sign up"
+              handleClick={() => null}
+              type="submit"
+            />
+          </div>
+        </Form>
+        <div>
+          Do you have an account already?{" "}
+          <Link href={"/login"}>
+            <span className="font-semibold text-purple-600">Log in</span>
+          </Link>
         </div>
-      </section>
+      </FormCard>
     </Formik>
   );
-}
+};
+
+export default RegisterForm;

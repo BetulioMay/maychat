@@ -1,4 +1,5 @@
-import React from "react";
+import React, { Suspense } from "react";
+import Loading from "./loading";
 
 interface LoginLayoutProps {
   children: React.ReactNode;
@@ -6,9 +7,11 @@ interface LoginLayoutProps {
 
 const LoginLayout: React.FC<LoginLayoutProps> = ({ children }) => {
   return (
-    <section className="flex min-h-screen items-center justify-center bg-white">
-      <div>{children}</div>
-    </section>
+    <Suspense fallback={<Loading />}>
+      <section className="flex min-h-screen items-center justify-center bg-white">
+        <div>{children}</div>
+      </section>
+    </Suspense>
   );
 };
 

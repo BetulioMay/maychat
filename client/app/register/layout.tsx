@@ -1,4 +1,5 @@
-import React from "react";
+import React, { Suspense } from "react";
+import Loading from "./loading";
 
 interface RegisterLayoutProps {
   children: React.ReactNode;
@@ -6,9 +7,11 @@ interface RegisterLayoutProps {
 
 const RegisterLayout: React.FC<RegisterLayoutProps> = ({ children }) => {
   return (
-    <section className="flex min-h-screen items-center justify-center bg-white">
-      <div>{children}</div>
-    </section>
+    <Suspense fallback={<Loading />}>
+      <section className="flex min-h-screen items-center justify-center bg-white">
+        <div>{children}</div>
+      </section>
+    </Suspense>
   );
 };
 

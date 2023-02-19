@@ -8,7 +8,7 @@ interface RegisterLayoutProps {
 const RegisterLayout: React.FC<RegisterLayoutProps> = ({ children }) => {
   return (
     <Suspense fallback={<Loading />}>
-      <section className="flex min-h-screen items-center justify-center bg-white">
+      <section className="flex min-h-screen items-center justify-center">
         <div>{children}</div>
       </section>
     </Suspense>

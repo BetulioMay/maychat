@@ -12,7 +12,7 @@ const FormCard: React.FC<FormCardProps> = ({ children, label }) => {
     //   className="flex w-auto flex-col items-center justify-center gap-6 rounded-2xl bg-cyan-200 p-4 shadow-sm shadow-cyan-400 md:w-[35rem]"
     //   {...props}
     // >
-    <div className="flex w-auto flex-col items-center justify-center gap-6 rounded-2xl bg-cyan-200 p-4 shadow-sm shadow-cyan-400 md:w-[35rem]">
+    <div className="flex w-auto flex-col items-center justify-center gap-6 rounded-2xl bg-cyan-200 p-4 shadow-sm shadow-cyan-400 dark:border-t dark:border-gray-500 dark:bg-slate-700 dark:text-blue-200 dark:shadow-none md:w-[35rem]">
       <FormLabel className="text-3xl font-medium" value={label} />
 
       {/* Maybe abstract this to body */}

@@ -8,7 +8,7 @@ interface LoginLayoutProps {
 const LoginLayout: React.FC<LoginLayoutProps> = ({ children }) => {
   return (
     <Suspense fallback={<Loading />}>
-      <section className="flex min-h-screen items-center justify-center bg-white">
+      <section className="flex min-h-screen items-center justify-center">
         <div>{children}</div>
       </section>
     </Suspense>

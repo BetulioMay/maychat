@@ -1,11 +1,11 @@
 "use client";
 import { Formik, Form, Field } from "formik";
 import React from "react";
-import Link from "next/link";
 import FormCard from "./FormCard";
 import TextInput from "components/TextInput";
 import Button from "components/Button";
 import Checkbox from "components/Checkbox";
+import TextLink from "components/TextLink";
 import type { RegisterFormValues, RegisterErrorValues } from "types/form";
 
 const RegisterForm: React.FC = () => {
@@ -104,9 +104,12 @@ const RegisterForm: React.FC = () => {
         </Form>
         <div>
           Do you have an account already?{" "}
-          <Link href={"/login"}>
-            <span className="font-semibold text-purple-600">Log in</span>
-          </Link>
+          {/* <Link href={"/login"}>
+            <span className="font-semibold text-purple-600 hover:underline">
+              Log in
+            </span>
+          </Link> */}
+          <TextLink value="Log in" href="/login" />
         </div>
       </FormCard>
     </Formik>

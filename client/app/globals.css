@@ -2,6 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  font-family: var(--font-inter);
+body {
+  font-family: "Arial", "Verdana", "sans-serif";
 }

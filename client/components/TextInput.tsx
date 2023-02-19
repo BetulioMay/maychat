@@ -29,7 +29,7 @@ const TextInput = ({
         {label}
       </label>
       <input
-        className="rounded-xl border-2 border-purple-500 border-opacity-0 p-2 text-black shadow-md outline-none transition-colors focus:border-opacity-100"
+        className="rounded-xl border-2 border-purple-500 border-opacity-0 p-2 text-black shadow-md outline-none transition-colors focus:border-opacity-100 dark:bg-slate-600 dark:text-white"
         {...field}
         {...props}
       />

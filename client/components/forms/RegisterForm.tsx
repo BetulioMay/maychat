@@ -93,14 +93,13 @@ const RegisterForm: React.FC = () => {
             />
           </div>
 
-          <div className="h-10 w-full rounded-md bg-purple-500 transition-all hover:bg-purple-800">
-            <Button
-              className="h-full w-full font-bold text-white"
-              value="Sign up"
-              handleClick={() => null}
-              type="submit"
-            />
-          </div>
+          {/* <div className="h-10 w-full rounded-md bg-purple-700 transition-all hover:bg-purple-800"> */}
+          <Button
+            className="h-10 w-full rounded-md bg-purple-700 font-bold text-white transition-all hover:bg-purple-800"
+            value="Sign up"
+            handleClick={() => console.log("hello")}
+            type="submit"
+          />
         </Form>
         <div>
           Do you have an account already?{" "}

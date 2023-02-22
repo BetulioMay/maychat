@@ -6,7 +6,7 @@ defmodule MaychatWeb.Router do
 
   alias MaychatWeb.Routes
   alias MaychatWeb.Utils.Errors.NormalizeError
-  alias MaychatWeb.Plugs.Pipes
+  alias MaychatWeb.{Plugs.Pipes, Plugs}
 
   defmodule PathNotFoundError do
     defexception [:message, plug_status: 404]
@@ -37,14 +37,24 @@ defmodule MaychatWeb.Router do
     parsers: [{:json, json_decoder: Jason}]
   )
 
+  # Cors middleware
+  plug(Plugs.Cors)
+
   # CSRF protection
   plug(Pipes.CSRF)
+
   plug(:match)
 
   # NOTE: this obviously is for testing purposes
   plug(Pipes.EnsureAuth, paths: ["/protected"])
 
   plug(:dispatch)
+
+  # CORS OPTIONS request to be successful
+  options _ do
+    conn
+    |> send_resp(200, "")
+  end
 
   forward("/auth", to: Routes.Auth)
   forward("/user", to: Routes.User)

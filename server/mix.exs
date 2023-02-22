@@ -29,6 +29,7 @@ defmodule Maychat.MixProject do
       {:plug, "~> 1.13"},
       {:plug_cowboy, "~> 2.0"},
       {:jason, "~> 1.3"},
+      {:recase, "~> 0.5"},
       # Authentication and authorization
       {:argon2_elixir, "~> 3.0"},
       {:guardian, "~> 2.3"},

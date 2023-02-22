@@ -19,8 +19,6 @@ defmodule MaychatWeb.Utils.Request do
       body_params: body_params
     } = conn
 
-    IO.inspect(body_params)
-
     {:ok,
      body_params
      |> Map.take(params), conn}

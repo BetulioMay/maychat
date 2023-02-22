@@ -16,7 +16,7 @@ defmodule MaychatWeb.Auth do
   """
   @spec authenticate_user(%{String.t() => any()}) ::
           {:ok, User.t()} | {:error, :invalid_credentials}
-  def(authenticate_user(params)) do
+  def authenticate_user(params) do
     params = normalize_params(params)
 
     username_email = if params["email"], do: params["email"], else: params["username"]
@@ -47,10 +47,16 @@ defmodule MaychatWeb.Auth do
     end
   end
 
+  # defp normalize_params(params) do
+  #   params
+  #   |> Enum.map(fn {k, v} -> {to_string(k), v} end)
+  #   |> Enum.into(%{})
+  # end
+
   defp normalize_params(params) do
-    params
-    |> Enum.map(fn {k, v} -> {to_string(k), v} end)
-    |> Enum.into(%{})
+    for {k, v} <- params, into: %{} do
+      {to_string(k), v}
+    end
   end
 
   def create_access_token(user) do

@@ -2,6 +2,11 @@
 
 OTP-based chat application written in Elixir.
 
+## TODO
+
+- Group schemas, changesets, context...
+- Messaging OTP system.
+
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed

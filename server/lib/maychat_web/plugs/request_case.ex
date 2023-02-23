@@ -1,6 +1,6 @@
 defmodule MaychatWeb.Plugs.RequestCase do
   @moduledoc """
-  Plug to convert JSON body keys into snake_case.
+  Plug to convert JSON body keys into snake_case. Intended to be used with egressing JSONs.
 
   Highly inspired on https://github.com/malomohq/accent
 
@@ -23,7 +23,7 @@ defmodule MaychatWeb.Plugs.RequestCase do
 
     case body_params do
       %Plug.Conn.Unfetched{} -> conn
-      _ -> %{conn | body_params: Case.convert(body_params, opts[:case])}
+      _ -> %{conn | body_params: Case.call(body_params, opts[:case])}
     end
   end
 end

@@ -37,7 +37,12 @@ defmodule MaychatWeb.Router do
     parsers: [{:json, json_decoder: Jason}]
   )
 
-  plug(Plugs.RequestCase)
+  plug(Plugs.RequestCase, case: Recase.SnakeCase)
+
+  plug(Plugs.ResponseCase,
+    json_codec: Jason,
+    case: Recase.CamelCase
+  )
 
   # Cors middleware
   plug(Plugs.Cors)

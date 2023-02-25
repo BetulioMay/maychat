@@ -9,6 +9,6 @@
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "prettier.prettierPath": "./client/.yarn/sdks/prettier/index.js",
 
-  "elixirLS.projectDir": "kousa",
-  "elixir.projectPath": "kousa"
+  "elixirLS.projectDir": "server",
+  "elixir.projectPath": "server"
 }

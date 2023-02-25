@@ -1,0 +1,14 @@
+{
+  "search.exclude": {
+    "**/.yarn": true,
+    "**/.pnp.*": true
+  },
+  "eslint.nodePath": "./client/.yarn/sdks",
+  "eslint.workingDirectories": ["client"],
+  "typescript.tsdk": "./client/.yarn/sdks/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "prettier.prettierPath": "./client/.yarn/sdks/prettier/index.js",
+
+  "elixirLS.projectDir": "kousa",
+  "elixir.projectPath": "kousa"
+}

@@ -1,12 +1,12 @@
 {
-  "name": "client",
+  "name": "@maychat/client",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@next/font": "13.1.6",

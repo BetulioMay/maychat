@@ -3,6 +3,7 @@ defmodule MaychatWeb.Controllers.SessionController do
 
   alias MaychatWeb.Auth
   alias MaychatWeb.Utils.Errors.NormalizeError
+  alias MaychatWeb.Plugs.Redirect
 
   import MaychatWeb.Utils.Request
 
@@ -63,6 +64,7 @@ defmodule MaychatWeb.Controllers.SessionController do
     IO.inspect(conn)
 
     conn
+    |> Redirect.redirect(Path.join(Application.get_env(:maychat, :client_base_url), "/"))
     |> send_resp(
       conn.status || 200,
       Jason.encode!(%{
